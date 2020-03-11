@@ -1,0 +1,12 @@
+{
+  "name": "front-el",
+  "version": "0.0.1",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^8.0.3"
+  }
+}
