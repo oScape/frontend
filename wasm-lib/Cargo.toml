@@ -10,9 +10,6 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = "0.2"
 
-[profile.release]
-opt-level = "s"
-
 [dependencies.web-sys]
 version = "0.3.24"
 features = [
@@ -22,3 +19,6 @@ features = [
   'Node',
   'Window',
 ]
+
+[profile.release]
+opt-level = "s"
