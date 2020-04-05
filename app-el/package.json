@@ -1,0 +1,22 @@
+{
+  "name": "front-el",
+  "version": "0.0.1",
+  "author": "",
+  "description": "",
+  "license": "MIT",
+  "main": "app.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^8.0.3"
+  },
+  "devDependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.2.0",
+    "html-webpack-plugin": "^4.0.4",
+    "text-encoding": "^0.7.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}

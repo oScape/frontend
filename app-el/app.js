@@ -9,7 +9,7 @@ function createWindow() {
         },
     });
 
-    win.loadFile('index.html');
+    win.loadFile('dist/index.html');
 
     win = null;
 }
@@ -17,7 +17,7 @@ function createWindow() {
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
-    if(process.platform != 'darwin') {
+    if (process.platform != 'darwin') {
         app.quit();
     }
 });
