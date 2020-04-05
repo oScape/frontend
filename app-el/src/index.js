@@ -1,4 +1,4 @@
-import("./../../pkg/index.js")
+import("./pkg/index.js")
     .then( wasm => {
         console.log("WASM loaded")
 

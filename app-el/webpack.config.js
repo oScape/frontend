@@ -12,7 +12,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin(),
         new WasmPackPlugin({
-            crateDirectory: path.resolve(__dirname, "../src")
+            crateDirectory: path.resolve(__dirname, "../wasm-lib/src"),
+            outDir: "../app-el/src/pkg",
         }),
         new webpack.ProvidePlugin({
             TextDecoder: ['text-encoding', 'TextDecoder'],
