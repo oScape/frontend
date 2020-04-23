@@ -1,3 +1,3 @@
-pub mod widgets;
+pub mod components;
 
-mod utils;
+pub mod utils;

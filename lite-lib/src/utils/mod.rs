@@ -6,5 +6,7 @@ pub fn get_document() -> Document {
 }
 
 pub fn get_body() -> HtmlElement {
-    get_document().body().expect("should have a body on document")
+    get_document()
+        .body()
+        .expect("should have a body on document")
 }
