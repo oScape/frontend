@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "lite-lib",
+    "wasm-lib"
+]
