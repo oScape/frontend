@@ -1,11 +1,11 @@
-use lite_lib::components::{button::*};
+use lite_lib::components::button::*;
 use lite_lib::utils;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
     let button = Button::new("My first button", utils::get_body());
-    button.render();
+    button.component.render();
 
     Ok(())
 }
