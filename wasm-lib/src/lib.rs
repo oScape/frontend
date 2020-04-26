@@ -3,9 +3,19 @@ use lite_lib::components::button::Button;
 use lite_lib::utils;
 use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
-    let button = Button::new("My first button", utils::get_body());
+    let button = Button::new("My first button", utils::document().body().unwrap(), || {
+        log("Clicked")
+    });
     button.render();
 
     Ok(())

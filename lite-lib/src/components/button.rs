@@ -1,32 +1,45 @@
 use crate::component::*;
 use crate::utils::*;
-use web_sys::{Element, HtmlElement};
+use js_sys::Function;
+use wasm_bindgen::{closure::Closure, JsCast};
+use web_sys::HtmlElement;
 
 pub struct Button {
     label: String,
     parent: HtmlElement,
+    event: fn(),
 }
 
 impl Component for Button {
     fn render(&self) {
-        self.parent
-            .append_child(&self.create_element())
-            .expect("could not insert element");
+        self.parent.append_child(&self.create_element()).unwrap();
     }
 
-    fn create_element(&self) -> Element {
-        let element = get_document()
+    fn create_element(&self) -> HtmlElement {
+        let event = self.event.clone();
+        let closure = Closure::wrap(Box::new(event) as Box<dyn Fn()>);
+        let element = document()
             .create_element("div")
-            .expect("could not create element");
-        element.set_inner_html(&self.label);
+            .unwrap()
+            .dyn_into::<HtmlElement>()
+            .unwrap();
+        element.set_onclick(Some(
+            closure.as_ref().to_owned().unchecked_ref::<Function>(),
+        ));
+        closure.forget();
+        element.set_inner_text(&self.label);
         element
     }
 }
 
 impl Button {
-    pub fn new(label: &str, parent: HtmlElement) -> Button {
+    pub fn new(label: &str, parent: HtmlElement, event: fn()) -> Button {
         let label = label.to_owned();
 
-        Button { label, parent }
+        Button {
+            label,
+            parent,
+            event,
+        }
     }
 }

@@ -1,12 +1,9 @@
-use web_sys::{Document, HtmlElement};
+use web_sys::{Document, Window};
 
-pub fn get_document() -> Document {
-    let window = web_sys::window().expect("no global `window` exists");
-    window.document().expect("should have a document on window")
+pub fn window() -> Window {
+    web_sys::window().unwrap()
 }
 
-pub fn get_body() -> HtmlElement {
-    get_document()
-        .body()
-        .expect("should have a body on document")
+pub fn document() -> Document {
+    window().document().unwrap()
 }
