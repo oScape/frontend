@@ -1,7 +1,10 @@
 use lite_lib::component::Component;
 use lite_lib::components::{button::Button, select::Select};
-use lite_lib::utils;
+use lite_lib::listener::EventListener;
+use lite_lib::utils::document;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::HtmlElement;
 
 #[wasm_bindgen]
 extern "C" {
@@ -13,14 +16,24 @@ extern "C" {
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
-    let button = Button::new("My first button", utils::document().body().unwrap(), || {
-        log("Clicked")
+    let button = Button::new("My first button", document().body().unwrap(), || {
+        log("An awsome mouse click")
     });
     button.render();
 
+    EventListener::new(
+        document()
+            .get_element_by_id("button")
+            .unwrap()
+            .dyn_into::<HtmlElement>()
+            .unwrap(),
+        "click",
+        || log("An awsome click add by eventListener"),
+    );
+
     let select = Select::new(
         "My first select",
-        utils::document().body().unwrap(),
+        document().body().unwrap(),
         vec!["First", "Second", "Third"],
     );
     select.render();

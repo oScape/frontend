@@ -23,6 +23,7 @@ impl Component for Button {
             .unwrap()
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
+        element.set_id("button");
         element.set_onclick(Some(
             closure.as_ref().to_owned().unchecked_ref::<Function>(),
         ));
