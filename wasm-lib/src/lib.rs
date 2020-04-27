@@ -1,5 +1,5 @@
 use lite_lib::component::Component;
-use lite_lib::components::button::Button;
+use lite_lib::components::{button::Button, select::Select};
 use lite_lib::utils;
 use wasm_bindgen::prelude::*;
 
@@ -17,6 +17,13 @@ pub fn run() -> Result<(), JsValue> {
         log("Clicked")
     });
     button.render();
+
+    let select = Select::new(
+        "My first select",
+        utils::document().body().unwrap(),
+        vec!["First", "Second", "Third"],
+    );
+    select.render();
 
     Ok(())
 }

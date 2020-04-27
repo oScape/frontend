@@ -2,7 +2,7 @@ use crate::component::*;
 use crate::utils::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
-use web_sys::HtmlElement;
+use web_sys::{HtmlButtonElement, HtmlElement};
 
 pub struct Button {
     label: String,
@@ -19,16 +19,16 @@ impl Component for Button {
         let event = self.event.clone();
         let closure = Closure::wrap(Box::new(event) as Box<dyn Fn()>);
         let element = document()
-            .create_element("div")
+            .create_element("button")
             .unwrap()
-            .dyn_into::<HtmlElement>()
+            .dyn_into::<HtmlButtonElement>()
             .unwrap();
         element.set_onclick(Some(
             closure.as_ref().to_owned().unchecked_ref::<Function>(),
         ));
         closure.forget();
         element.set_inner_text(&self.label);
-        element
+        element.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
