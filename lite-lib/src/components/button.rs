@@ -7,7 +7,7 @@ use web_sys::{HtmlButtonElement, HtmlElement};
 pub struct Button {
     label: String,
     parent: HtmlElement,
-    event: fn(),
+    callback: fn(),
 }
 
 impl Component for Button {
@@ -16,8 +16,8 @@ impl Component for Button {
     }
 
     fn create_element(&self) -> HtmlElement {
-        let event = self.event.clone();
-        let closure = Closure::wrap(Box::new(event) as Box<dyn Fn()>);
+        let callback = self.callback.clone();
+        let closure = Closure::wrap(Box::new(callback) as Box<dyn Fn()>);
         let element = document()
             .create_element("button")
             .unwrap()
@@ -33,13 +33,13 @@ impl Component for Button {
 }
 
 impl Button {
-    pub fn new(label: &str, parent: HtmlElement, event: fn()) -> Button {
+    pub fn new(label: &str, parent: HtmlElement, callback: fn()) -> Button {
         let label = label.to_owned();
 
         Button {
             label,
             parent,
-            event,
+            callback,
         }
     }
 }
