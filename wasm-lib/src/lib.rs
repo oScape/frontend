@@ -38,6 +38,16 @@ pub fn run() -> Result<(), JsValue> {
     );
     select.render();
 
+    EventListener::new(
+        document()
+            .get_element_by_id("select")
+            .unwrap()
+            .dyn_into::<HtmlElement>()
+            .unwrap(),
+        "change",
+        || log("An awsome click add by eventListener in select with value"),
+    );
+
     Ok(())
 }
 

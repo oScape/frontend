@@ -20,6 +20,7 @@ impl Component for Select {
             .unwrap()
             .dyn_into::<HtmlSelectElement>()
             .unwrap();
+        element.set_id("select");
         for option in &self.options {
             let opt = document()
                 .create_element("option")
