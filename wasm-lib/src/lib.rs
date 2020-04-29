@@ -28,7 +28,7 @@ pub fn run() -> Result<(), JsValue> {
             .dyn_into::<HtmlElement>()
             .unwrap(),
         "click",
-        || log("An awsome click add by eventListener"),
+        |_event| log(&_event.type_()),
     );
 
     let select = Select::new(
@@ -45,7 +45,7 @@ pub fn run() -> Result<(), JsValue> {
             .dyn_into::<HtmlElement>()
             .unwrap(),
         "change",
-        || log("An awsome click add by eventListener in select with value"),
+        |_event| log(&_event.type_()),
     );
 
     Ok(())
