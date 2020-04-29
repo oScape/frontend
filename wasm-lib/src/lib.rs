@@ -4,7 +4,7 @@ use lite_lib::listener::EventListener;
 use lite_lib::utils::document;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::HtmlElement;
+use web_sys::{Event, HtmlElement, HtmlSelectElement};
 
 #[wasm_bindgen]
 extern "C" {
@@ -28,7 +28,7 @@ pub fn run() -> Result<(), JsValue> {
             .dyn_into::<HtmlElement>()
             .unwrap(),
         "click",
-        |_event| log(&_event.type_()),
+        |_event| add_button(),
     );
 
     let select = Select::new(
@@ -45,10 +45,23 @@ pub fn run() -> Result<(), JsValue> {
             .dyn_into::<HtmlElement>()
             .unwrap(),
         "change",
-        |_event| log(&_event.type_()),
+        |_event| catch_select(_event),
     );
 
     Ok(())
+}
+
+fn add_button() {
+    let button = Button::new("My second button", document().body().unwrap(), || {
+        log("An second awsome mouse click")
+    });
+    button.render();
+}
+
+fn catch_select(_event: Event) {
+    let e_target = _event.current_target().unwrap();
+    let element = e_target.dyn_into::<HtmlSelectElement>().unwrap();
+    log(&element.value());
 }
 
 #[wasm_bindgen]
