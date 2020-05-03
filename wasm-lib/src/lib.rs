@@ -1,13 +1,11 @@
-use js_sys::Promise;
 use lite_lib::component::Component;
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
 use lite_lib::utils::{document, window};
-use std::task;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{Event, HtmlElement, HtmlSelectElement, Request, RequestInit, RequestMode, Response};
+use web_sys::{HtmlElement, Request, RequestInit, RequestMode, Response};
 
 #[wasm_bindgen]
 extern "C" {
@@ -19,11 +17,11 @@ extern "C" {
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
+    // Create a Button element and add a on_click EventListener
     let button = Button::new("My first button", document().body().unwrap(), || {
         log("An awsome mouse click")
     });
     button.render();
-
     EventListener::new(
         document()
             .get_element_by_id("button")
@@ -33,14 +31,13 @@ pub fn run() -> Result<(), JsValue> {
         "click",
         on_button_click,
     );
-
+    // Create a Select element and add a on_change EventListener
     let select = Select::new(
         "My first select",
         document().body().unwrap(),
         vec!["First", "Second", "Third"],
     );
     select.render();
-
     EventListener::new(
         document()
             .get_element_by_id("select")
@@ -54,13 +51,13 @@ pub fn run() -> Result<(), JsValue> {
     Ok(())
 }
 
-fn on_select_change(_event: Event) {
+fn on_select_change() {
     let mut req = RequestInit::new();
     req.method("GET");
     req.mode(RequestMode::Cors);
     let request = Request::new_with_str_and_init("http://127.0.0.1:7878/data", &req)
         .expect("Request could not be created");
-    //block until async shit is done
+    // Block until async shit is done
     spawn_local(fetch_and_log_data(request));
 }
 
@@ -75,17 +72,17 @@ async fn fetch_and_log_data(request: Request) {
     let resp: Response = response.dyn_into().unwrap();
 
     // Convert this other `Promise` into a rust `Future`.
-    let page = JsFuture::from(resp.text().unwrap())
+    let output_text = JsFuture::from(resp.text().unwrap())
         .await
         .unwrap()
         .as_string()
         .unwrap();
 
     // Log the fetched data
-    log(&page);
+    log(&output_text);
 }
 
-fn on_button_click(_event: Event) {
+fn on_button_click() {
     let button = Button::new("My second button", document().body().unwrap(), || {
         log("An second awsome mouse click")
     });
