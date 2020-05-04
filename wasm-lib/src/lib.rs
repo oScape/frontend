@@ -1,11 +1,11 @@
 use lite_lib::component::Component;
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
-use lite_lib::utils::{document, window};
+use lite_lib::utils::{dom::document, fetch::fetch_and_log_data};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{HtmlElement, Request, RequestInit, RequestMode, Response};
+use wasm_bindgen_futures::spawn_local;
+use web_sys::{HtmlElement, Request, RequestInit, RequestMode};
 
 #[wasm_bindgen]
 extern "C" {
@@ -59,27 +59,6 @@ fn on_select_change() {
         .expect("Request could not be created");
     // Block until async shit is done
     spawn_local(fetch_and_log_data(request));
-}
-
-async fn fetch_and_log_data(request: Request) {
-    // Fetch data from the server
-    let response = JsFuture::from(window().fetch_with_request(&request))
-        .await
-        .expect("Could not unwrap response");
-
-    // `response` is a `Response` object.
-    assert!(response.is_instance_of::<Response>());
-    let resp: Response = response.dyn_into().unwrap();
-
-    // Convert this other `Promise` into a rust `Future`.
-    let output_text = JsFuture::from(resp.text().unwrap())
-        .await
-        .unwrap()
-        .as_string()
-        .unwrap();
-
-    // Log the fetched data
-    log(&output_text);
 }
 
 fn on_button_click() {

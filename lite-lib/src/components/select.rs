@@ -1,7 +1,7 @@
 use crate::component::*;
-use crate::utils::*;
+use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlElement, HtmlOptionElement, HtmlSelectElement, HtmlLabelElement};
+use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
 
 pub struct Select {
     label: String,

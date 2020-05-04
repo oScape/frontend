@@ -1,5 +1,5 @@
 use crate::component::*;
-use crate::utils::*;
+use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
 use web_sys::{HtmlButtonElement, HtmlElement};
