@@ -32,7 +32,6 @@ name = "lite-lib"
 version = "0.1.0"
 dependencies = [
  "js-sys",
- "lazy_static",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",

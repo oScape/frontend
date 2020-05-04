@@ -1,14 +1,18 @@
-struct Store {
+pub struct Store {
     data: Vec<String>,
 }
 
 impl Store {
-    fn new() -> Store {
+    pub fn new() -> Store {
         let data = vec!["yolo".to_owned()];
         Store { data }
     }
-}
 
-lazy_static! {
-    static ref STORE: Store = { Store::new() };
+    pub fn add_data(&mut self, data: String) {
+        self.data.push(data);
+    }
+
+    pub fn get_first_data(self) -> String {
+        self.data.first().unwrap().to_owned()
+    }
 }
