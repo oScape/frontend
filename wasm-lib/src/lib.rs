@@ -1,4 +1,4 @@
-use lite_lib::component::Component;
+use lite_lib::component::{base::Base};
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
 use lite_lib::utils::{dom::document, fetch::fetch_and_log_data};

@@ -1,4 +1,4 @@
-use crate::component::*;
+use crate::component::{label::Label, base::Base};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
@@ -9,19 +9,14 @@ pub struct Select {
     options: Vec<String>,
 }
 
-impl Component for Select {
+impl Base for Select {
     fn render(&self) {
+        // Insert element
+        self.parent.append_child(&self.create_label()).unwrap();
         self.parent.append_child(&self.create_element()).unwrap();
     }
 
     fn create_element(&self) -> HtmlElement {
-        // Create the label element
-        let label = document()
-            .create_element(&self.label)
-            .unwrap()
-            .dyn_into::<HtmlLabelElement>()
-            .unwrap();
-        label.set_html_for("select");
         // Create the select element
         let element = document()
             .create_element("select")
@@ -42,6 +37,21 @@ impl Component for Select {
         }
 
         element.dyn_into::<HtmlElement>().unwrap()
+    }
+}
+
+impl Label for Select {
+    fn create_label(&self) -> HtmlElement {
+        // Create the label element
+        let label = document()
+            .create_element("label")
+            .unwrap()
+            .dyn_into::<HtmlLabelElement>()
+            .unwrap();
+        label.set_inner_text(&self.label);
+        label.set_html_for("select");
+        
+        label.dyn_into::<HtmlElement>().unwrap()
     }
 }
 

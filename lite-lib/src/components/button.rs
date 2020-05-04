@@ -1,4 +1,4 @@
-use crate::component::*;
+use crate::component::base::Base;
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
@@ -10,7 +10,7 @@ pub struct Button {
     callback: fn(),
 }
 
-impl Component for Button {
+impl Base for Button {
     fn render(&self) {
         self.parent.append_child(&self.create_element()).unwrap();
     }
