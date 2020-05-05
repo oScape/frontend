@@ -1,18 +1,29 @@
+use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
+
+#[derive(Debug)]
 pub struct Store {
     data: Vec<String>,
 }
 
+static STORE: Lazy<Arc<Mutex<Store>>> = Lazy::new(|| {
+    Arc::new(Mutex::new(Store {
+        data: vec!["hard coded".to_owned()]
+    }))
+});
+
 impl Store {
-    pub fn new() -> Store {
-        let data = vec!["yolo".to_owned()];
-        Store { data }
+    pub fn get_store() -> &'static Arc<Mutex<Store>> {
+        &*STORE
     }
 
-    pub fn add_data(&mut self, data: String) {
-        self.data.push(data);
+    pub fn set_data(data: String) {
+        let store = &mut *STORE.lock().unwrap();
+        store.data.push(data);
     }
 
-    pub fn get_first_data(self) -> String {
-        self.data.first().unwrap().to_owned()
+    pub fn get_values() -> Vec<String> {
+        let store = &mut *STORE.lock().unwrap();
+        store.data.clone()
     }
 }

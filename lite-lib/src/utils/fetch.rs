@@ -1,9 +1,10 @@
 use super::dom::*;
+use crate::store::Store;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, Response};
 
-pub async fn fetch_and_log_data(request: Request) {
+pub async fn fetch_and_store_data(request: Request) {
     // Fetch data from the server
     let response = JsFuture::from(window().fetch_with_request(&request))
         .await
@@ -21,5 +22,5 @@ pub async fn fetch_and_log_data(request: Request) {
         .unwrap();
 
     // Log the fetched data
-    // log(&output_text);
+    Store::set_data(output_text);
 }

@@ -1,7 +1,7 @@
 use lite_lib::component::{base::Base};
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
-use lite_lib::utils::{dom::document, fetch::fetch_and_log_data};
+use lite_lib::utils::{dom::document, fetch::fetch_and_store_data};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
@@ -58,7 +58,7 @@ fn on_select_change() {
     let request = Request::new_with_str_and_init("http://127.0.0.1:7878/data", &req)
         .expect("Request could not be created");
     // Block until async shit is done
-    spawn_local(fetch_and_log_data(request));
+    spawn_local(fetch_and_store_data(request));
 }
 
 fn on_button_click() {
