@@ -1,5 +1,5 @@
-use super::subscription::Subscription;
 use super::reducer::Reducer;
+use super::subscription::Subscription;
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 

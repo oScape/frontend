@@ -1,4 +1,4 @@
-use crate::component::{label::Label, base::Base};
+use crate::component::{base::Base, label::Label};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
@@ -50,7 +50,7 @@ impl Label for Select {
             .unwrap();
         label.set_inner_text(&self.label);
         label.set_html_for("select");
-        
+
         label.dyn_into::<HtmlElement>().unwrap()
     }
 }
