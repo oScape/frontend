@@ -1,5 +1,5 @@
 use super::dom::*;
-use crate::store::Store;
+use crate::store::store::Store;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, Response};

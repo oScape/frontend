@@ -2,6 +2,7 @@ use lite_lib::component::{base::Base};
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data};
+use lite_lib::store::{store::Store, subscription::Subscription};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
@@ -47,6 +48,12 @@ pub fn run() -> Result<(), JsValue> {
         "change",
         on_select_change,
     );
+
+    let listener: Subscription = || {
+        log("From subscriber: Something changed in the store!");
+    };
+
+    Store::subscribe(listener);
 
     Ok(())
 }
