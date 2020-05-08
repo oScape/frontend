@@ -3,9 +3,9 @@ use wasm_bindgen::{closure::Closure, JsCast};
 use web_sys::{EventTarget, HtmlElement};
 
 pub struct EventListener {
-    target: EventTarget,
-    event_type: String,
-    callback: fn(),
+    _target: EventTarget,
+    _event_type: String,
+    _callback: fn(),
 }
 
 impl EventListener {
@@ -24,9 +24,9 @@ impl EventListener {
         let event_type = event_type.to_owned();
 
         EventListener {
-            target,
-            event_type,
-            callback,
+            _target: target,
+            _event_type: event_type,
+            _callback: callback,
         }
     }
 }
