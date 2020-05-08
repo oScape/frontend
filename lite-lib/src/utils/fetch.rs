@@ -1,10 +1,42 @@
 use super::dom::*;
-use crate::store::store::Store;
-use wasm_bindgen::JsCast;
+use crate::store::{store::Store, subscription::Subscription};
+use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, Response};
 
+#[derive(Default)]
+struct State {
+    data: String
+}
+
+enum Action {
+    Change(String)
+}
+
+fn data_reducer(_state: &State, action: &Action) -> State {
+    match action {
+        Action::Change(data) => State {
+            data: data.clone()
+        }
+    }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
 pub async fn fetch_and_store_data(request: Request) {
+    // Create the store
+    let mut store = Store::new(data_reducer, State::default());
+
+    let listener: Subscription<State> = |state: &State| {
+        log(&format!("Counter changed! New value: {}", state.data));
+    };
+
+    store.subscribe(listener);
+
     // Fetch data from the server
     let response = JsFuture::from(window().fetch_with_request(&request))
         .await
@@ -15,12 +47,11 @@ pub async fn fetch_and_store_data(request: Request) {
     let resp: Response = response.dyn_into().unwrap();
 
     // Convert this other `Promise` into a rust `Future`.
-    let output_text = JsFuture::from(resp.text().unwrap())
+    let ouput = JsFuture::from(resp.text().unwrap())
         .await
         .unwrap()
         .as_string()
         .unwrap();
 
-    // Log the fetched data
-    Store::set_data(output_text);
+    store.dispatch(Action::Change(ouput));
 }

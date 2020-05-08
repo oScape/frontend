@@ -5,27 +5,21 @@
 /// 
 /// # Example
 /// ```
+/// #[derive(Default)]
 /// struct State {
-///    counter: i8
+///     data: String
 /// }
 ///
 /// enum Action {
-///     Increment,
-///     Decrement
+///     Change(String)
 /// }
 ///
-/// let reducer: Reducer<State, Action> = |state: State, action: Action| -> State {
+/// fn data_reducer(state: &State, action: &Action) -> State {
 ///     match action {
-///         Action::Increment => State {
-///             counter: state.counter + 1
-///         },
-///         Action::Decrement => State {
-///             counter: state.counter - 1
-///         },
-///         _ => State {
-///             counter: state
-///         },
+///         Action::Change(data) => State {
+///             data: data.clone()
+///         }
 ///     }
-/// };
+/// }
 /// ```
-pub type Reducer<State, Action> = fn(State, Action) -> State;
+pub type Reducer<State, Action> = fn(&State, &Action) -> State;

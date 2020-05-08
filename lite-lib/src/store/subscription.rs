@@ -3,12 +3,12 @@
 ///
 /// # Example
 /// ```
-/// let listener = |state: State| {
-///     println!("The counter as been incremented: {}", state.counter);
+/// let mut store = Store::new(data_reducer, State::default());
+///
+/// let listener: Subscription<State> = |state: &State| {
+///     log(&format!("Counter changed! New value: {}", state.data));
 /// };
 ///
-/// Store::subscribe(listener);
-///
-/// Store::dispatch(Action::Increment);
+/// store.subscribe(listener);
 /// ```
-pub type Subscription<State> = fn(State);
+pub type Subscription<State> = fn(&State);

@@ -1,43 +1,88 @@
 use super::reducer::Reducer;
 use super::subscription::Subscription;
-use once_cell::sync::Lazy;
-use std::sync::{Arc, Mutex};
 
-#[derive(Debug)]
-pub struct Store {
-    data: Vec<String>,
-    reducers: Vec<Reducer>,
-    subscriptions: Vec<Subscription>,
+/// A container holding a state and providing the possibility to dispatch actions.
+///
+/// A store is defined by the state is holds and the actions it can dispatch.
+pub struct Store<State, Action> {
+    reducer: Reducer<State, Action>,
+    state: State,
+    subscriptions: Vec<Subscription<State>>
 }
 
-static STORE: Lazy<Arc<Mutex<Store>>> = Lazy::new(|| {
-    Arc::new(Mutex::new(Store {
-        data: vec!["hard coded".to_owned()],
-        reducers: Vec::new(),
-        subscriptions: Vec::new(),
-    }))
-});
-
-impl Store {
-    pub fn get_store() -> &'static Arc<Mutex<Store>> {
-        &*STORE
-    }
-
-    pub fn set_data(data: String) {
-        let store = &mut *STORE.lock().unwrap();
-        &store.data.push(data);
-        for sub in &store.subscriptions {
-            sub();
+impl<State, Action> Store<State, Action> {
+    /// Create a store
+    ///
+    /// # Example
+    /// ```
+    /// #[derive(Default)]
+    /// struct State {
+    ///     data: String
+    /// }
+    ///
+    /// enum Action {
+    ///     Change(String)
+    /// }
+    ///
+    /// fn data_reducer(state: &State, action: &Action) -> State {
+    ///     match action {
+    ///         Action::Change(data) => State {
+    ///             data: data.clone()
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// let mut store = Store::new(data_reducer, State::default());
+    /// ```
+    pub fn new(reducer: Reducer<State, Action>, initial_state: State) -> Self {
+        Self {
+            reducer,
+            state: initial_state,
+            subscriptions: Vec::new()
         }
     }
 
-    pub fn get_values() -> Vec<String> {
-        let store = &mut *STORE.lock().unwrap();
-        store.data.clone()
+    /// Return the current state.
+    pub fn state(&self) -> &State {
+        &self.state
     }
 
-    pub fn subscribe(sub: Subscription) {
-        let store = &mut *STORE.lock().unwrap();
-        store.subscriptions.push(sub);
+    /// Dispatch an action which is executed by the reducer.
+    ///
+    /// # Example
+    /// ```
+    /// store.dispatch(Action::Change(ouput));
+    /// ```
+    pub fn dispatch(&mut self, action: Action) {
+        self.dispatch_reducer(&action);
+    }
+
+    /// Execute the reducer.
+    fn dispatch_reducer(&mut self, action: &Action) {
+        self.state = (&self.reducer)(self.state(), action);
+        self.dispatch_subscriptions();
+    }
+
+    /// Execute the subscription.
+    fn dispatch_subscriptions(&self) {
+        for subscription in &self.subscriptions {
+            subscription(self.state());
+        }
+    }
+
+    /// Subscribe a callback to the store which is executed at any changes of state
+    ///
+    /// # Example
+    /// ```
+    /// let mut store = Store::new(data_reducer, State::default());
+    ///
+    /// let listener: Subscription<State> = |state: &State| {
+    ///     log(&format!("Counter changed! New value: {}", state.data));
+    /// };
+    ///
+    /// store.subscribe(listener);
+    /// ```
+    pub fn subscribe(&mut self, callback: Subscription<State>) {
+        self.subscriptions.push(callback);
     }
 }
