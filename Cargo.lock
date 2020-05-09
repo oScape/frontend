@@ -158,7 +158,6 @@ checksum = "71f77b681efd0bca6f8ea356cdc2e497538b41d3e2a02afed18ce8f022231d29"
 name = "wasm-lib"
 version = "0.1.0"
 dependencies = [
- "js-sys",
  "lite-lib",
  "wasm-bindgen",
  "wasm-bindgen-futures",
