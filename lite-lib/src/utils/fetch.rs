@@ -6,18 +6,16 @@ use web_sys::{Request, Response};
 
 #[derive(Default)]
 struct State {
-    data: String
+    data: String,
 }
 
 enum Action {
-    Change(String)
+    Change(String),
 }
 
 fn data_reducer(_state: &State, action: &Action) -> State {
     match action {
-        Action::Change(data) => State {
-            data: data.clone()
-        }
+        Action::Change(data) => State { data: data.clone() },
     }
 }
 

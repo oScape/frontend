@@ -7,7 +7,7 @@ use super::subscription::Subscription;
 pub struct Store<State, Action> {
     reducer: Reducer<State, Action>,
     state: State,
-    subscriptions: Vec<Subscription<State>>
+    subscriptions: Vec<Subscription<State>>,
 }
 
 impl<State, Action> Store<State, Action> {
@@ -38,7 +38,7 @@ impl<State, Action> Store<State, Action> {
         Self {
             reducer,
             state: initial_state,
-            subscriptions: Vec::new()
+            subscriptions: Vec::new(),
         }
     }
 
