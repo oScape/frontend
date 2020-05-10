@@ -1,5 +1,7 @@
 use lite_lib::component::base::Base;
-use lite_lib::components::{button::Button, select::Select};
+use lite_lib::components::{
+    button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
+};
 use lite_lib::listener::EventListener;
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use wasm_bindgen::prelude::*;
@@ -30,6 +32,14 @@ pub fn run() -> Result<(), JsValue> {
     );
     select.render();
     EventListener::new(SelectorType::Id, "select", "change", on_select_change);
+
+    let form_element = FormElement::new(
+        "form_element",
+        FormElementType::Input,
+        Some("Entrer un nom"),
+    );
+    let form = Form::new("first_form", document().body().unwrap(), vec![form_element]);
+    form.render();
 
     Ok(())
 }
