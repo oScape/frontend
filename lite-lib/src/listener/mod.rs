@@ -1,6 +1,7 @@
+use crate::utils::query_selector::{query_selector, SelectorType};
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
-use web_sys::{EventTarget, HtmlElement};
+use web_sys::EventTarget;
 
 pub struct EventListener {
     _target_event: EventTarget,
@@ -9,7 +10,13 @@ pub struct EventListener {
 }
 
 impl EventListener {
-    pub fn new(target_element: HtmlElement, event_type: &str, callback: fn()) -> EventListener {
+    pub fn new(
+        selector_type: SelectorType,
+        selector: &str,
+        event_type: &str,
+        callback: fn(),
+    ) -> EventListener {
+        let target_element = query_selector(selector_type, selector);
         let target_event = EventTarget::from(target_element);
         let closure = Closure::wrap(Box::new(callback) as Box<dyn Fn()>);
 

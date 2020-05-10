@@ -1,11 +1,10 @@
 use lite_lib::component::base::Base;
 use lite_lib::components::{button::Button, select::Select};
 use lite_lib::listener::EventListener;
-use lite_lib::utils::{dom::document, fetch::fetch_and_store_data};
+use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{HtmlElement, Request, RequestInit, RequestMode};
+use web_sys::{Request, RequestInit, RequestMode};
 
 #[wasm_bindgen]
 extern "C" {
@@ -22,15 +21,7 @@ pub fn run() -> Result<(), JsValue> {
         log("An awsome mouse click")
     });
     button.render();
-    EventListener::new(
-        document()
-            .get_element_by_id("button")
-            .unwrap()
-            .dyn_into::<HtmlElement>()
-            .unwrap(),
-        "click",
-        on_button_click,
-    );
+    EventListener::new(SelectorType::Id, "button", "click", on_button_click);
     // Create a Select element and add a on_change EventListener
     let select = Select::new(
         "My first select",
@@ -38,15 +29,7 @@ pub fn run() -> Result<(), JsValue> {
         vec!["First", "Second", "Third"],
     );
     select.render();
-    EventListener::new(
-        document()
-            .get_element_by_id("select")
-            .unwrap()
-            .dyn_into::<HtmlElement>()
-            .unwrap(),
-        "change",
-        on_select_change,
-    );
+    EventListener::new(SelectorType::Id, "select", "change", on_select_change);
 
     Ok(())
 }
