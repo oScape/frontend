@@ -18,12 +18,12 @@ impl Base for Select {
 
     fn create_element(&self) -> HtmlElement {
         // Create the select element
-        let element = document()
+        let select = document()
             .create_element("select")
             .unwrap()
             .dyn_into::<HtmlSelectElement>()
             .unwrap();
-        element.set_id("select");
+        select.set_id("select");
         // Create and add the options elements to the select element
         for option in &self.options {
             let opt = document()
@@ -33,10 +33,10 @@ impl Base for Select {
                 .unwrap();
             opt.set_inner_text(option);
             opt.set_value(option);
-            element.append_child(&opt).unwrap();
+            select.append_child(&opt).unwrap();
         }
 
-        element.dyn_into::<HtmlElement>().unwrap()
+        select.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
