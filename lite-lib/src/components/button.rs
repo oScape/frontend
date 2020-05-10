@@ -5,7 +5,7 @@ use wasm_bindgen::{closure::Closure, JsCast};
 use web_sys::{HtmlButtonElement, HtmlElement};
 
 pub struct Button {
-    label: String,
+    title: String,
     parent: HtmlElement,
     callback: fn(),
 }
@@ -18,27 +18,28 @@ impl Base for Button {
     fn create_element(&self) -> HtmlElement {
         let callback = self.callback.clone();
         let closure = Closure::wrap(Box::new(callback) as Box<dyn Fn()>);
-        let element = document()
+        let button = document()
             .create_element("button")
             .unwrap()
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
-        element.set_id("button");
-        element.set_onclick(Some(
+        button.set_id("button");
+        button.set_onclick(Some(
             closure.as_ref().to_owned().unchecked_ref::<Function>(),
         ));
         closure.forget();
-        element.set_inner_text(&self.label);
-        element.dyn_into::<HtmlElement>().unwrap()
+        button.set_inner_text(&self.title);
+
+        button.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
 impl Button {
-    pub fn new(label: &str, parent: HtmlElement, callback: fn()) -> Button {
-        let label = label.to_owned();
+    pub fn new(title: &str, parent: HtmlElement, callback: fn()) -> Button {
+        let title = title.to_owned();
 
         Button {
-            label,
+            title,
             parent,
             callback,
         }
