@@ -3,6 +3,7 @@ use lite_lib::components::{
     button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
 use lite_lib::listener::EventListener;
+use lite_lib::store::{provider::Provider, store::Store};
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
@@ -16,19 +17,40 @@ extern "C" {
     fn log(s: &str);
 }
 
+#[derive(Default)]
+struct State {
+    data: String,
+}
+
+enum Action {
+    Change(String),
+}
+
+fn data_reducer(_state: &State, action: &Action) -> State {
+    match action {
+        Action::Change(data) => State { data: data.clone() },
+    }
+}
+
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
+    // Create the store
+    let store = Store::new(data_reducer, State::default());
+    // Create the provider
+    let _provider = Provider::new(store, "UnknowInstance".to_string());
     // Create a Button element and add a on_click EventListener
-    let button = Button::new("My first button", document().body().unwrap(), || {
-        log("An awsome mouse click")
-    });
+    let button = Button::new(
+        "My first button",
+        || log("An awsome mouse click"),
+        "UnknowInstance".to_string(),
+    );
     button.render();
     EventListener::new(SelectorType::Id, "button", "click", on_button_click);
     // Create a Select element and add a on_change EventListener
     let select = Select::new(
         "My first select",
-        document().body().unwrap(),
         vec!["First", "Second", "Third"],
+        "UnknowInstance".to_string(),
     );
     select.render();
     EventListener::new(SelectorType::Id, "select", "change", on_select_change);
@@ -38,7 +60,11 @@ pub fn run() -> Result<(), JsValue> {
         FormElementType::Input,
         Some("Entrer un nom"),
     );
-    let form = Form::new("first_form", document().body().unwrap(), vec![form_element]);
+    let form = Form::new(
+        "first_form",
+        vec![form_element],
+        "UnknowInstance".to_string(),
+    );
     form.render();
 
     Ok(())
@@ -55,9 +81,11 @@ fn on_select_change() {
 }
 
 fn on_button_click() {
-    let button = Button::new("My second button", document().body().unwrap(), || {
-        log("An second awsome mouse click")
-    });
+    let button = Button::new(
+        "My second button",
+        || log("An second awsome mouse click"),
+        "UnknowInstance".to_string(),
+    );
     button.render();
 }
 

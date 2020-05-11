@@ -1,4 +1,5 @@
 use crate::component::Base;
+use crate::store::provider::UnknowInstance;
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
@@ -6,13 +7,18 @@ use web_sys::{HtmlButtonElement, HtmlElement};
 
 pub struct Button {
     title: String,
-    parent: HtmlElement,
     callback: fn(),
+    _parent: UnknowInstance,
 }
 
 impl Base for Button {
     fn render(&self) {
-        self.parent.append_child(&self.create_element()).unwrap();
+        document()
+            .body()
+            .unwrap()
+            .append_child(&self.create_element())
+            .unwrap();
+        // self.parent.append_child(&self.create_element()).unwrap();
     }
 
     fn create_element(&self) -> HtmlElement {
@@ -35,13 +41,13 @@ impl Base for Button {
 }
 
 impl Button {
-    pub fn new(title: &str, parent: HtmlElement, callback: fn()) -> Button {
+    pub fn new(title: &str, callback: fn(), parent: UnknowInstance) -> Button {
         let title = title.to_owned();
 
         Button {
             title,
-            parent,
             callback,
+            _parent: parent,
         }
     }
 }

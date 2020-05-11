@@ -16,6 +16,7 @@ features = [
     'Document',
     'HtmlElement',
     'HtmlButtonElement',
+    'HtmlDivElement',
     'HtmlFormElement',
     'HtmlInputElement',
     'HtmlLabelElement',
