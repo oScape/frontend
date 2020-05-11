@@ -1,4 +1,4 @@
-use crate::component::{base::Base, label::Label};
+use crate::component::{Base, Label};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};

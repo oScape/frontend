@@ -1,4 +1,4 @@
-use crate::component::base::Base;
+use crate::component::Base;
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};

@@ -1,4 +1,4 @@
-use lite_lib::component::base::Base;
+use lite_lib::component::Base;
 use lite_lib::components::{
     button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
