@@ -1,5 +1,4 @@
-use crate::component::Base;
-use crate::store::provider::UnknowInstance;
+use crate::component::Component;
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlFormElement, HtmlInputElement, HtmlLabelElement};
@@ -21,19 +20,9 @@ pub struct FormElement {
 pub struct Form {
     name: String,
     form_elements: Vec<FormElement>,
-    _parent: UnknowInstance,
 }
 
-impl Base for Form {
-    fn render(&self) {
-        document()
-            .body()
-            .unwrap()
-            .append_child(&self.create_element())
-            .unwrap();
-        // self.parent.append_child(&self.create_element()).unwrap();
-    }
-
+impl Component for Form {
     fn create_element(&self) -> HtmlElement {
         // Create the form element
         let form = document()
@@ -91,13 +80,12 @@ impl FormElement {
 }
 
 impl Form {
-    pub fn new(name: &str, form_elements: Vec<FormElement>, parent: UnknowInstance) -> Form {
+    pub fn new(name: &str, form_elements: Vec<FormElement>) -> Form {
         let name = name.to_owned();
 
         Form {
             name,
             form_elements,
-            _parent: parent,
         }
     }
 }

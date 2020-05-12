@@ -1,5 +1,4 @@
-use crate::component::{Base, Label};
-use crate::store::provider::UnknowInstance;
+use crate::component::{Component, Label};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
@@ -7,25 +6,9 @@ use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElemen
 pub struct Select {
     label: String,
     options: Vec<String>,
-    _parent: UnknowInstance,
 }
 
-impl Base for Select {
-    fn render(&self) {
-        document()
-            .body()
-            .unwrap()
-            .append_child(&self.create_label())
-            .unwrap();
-        document()
-            .body()
-            .unwrap()
-            .append_child(&self.create_element())
-            .unwrap();
-        // self.parent.append_child(&self.create_label()).unwrap();
-        // self.parent.append_child(&self.create_element()).unwrap();
-    }
-
+impl Component for Select {
     fn create_element(&self) -> HtmlElement {
         // Create the select element
         let select = document()
@@ -66,14 +49,10 @@ impl Label for Select {
 }
 
 impl Select {
-    pub fn new(label: &str, options: Vec<&str>, parent: UnknowInstance) -> Select {
+    pub fn new(label: &str, options: Vec<&str>) -> Select {
         let label = label.to_owned();
         let options = options.iter().map(|s| s.to_string()).collect();
 
-        Select {
-            label,
-            options,
-            _parent: parent,
-        }
+        Select { label, options }
     }
 }

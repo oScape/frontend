@@ -1,4 +1,4 @@
-use lite_lib::component::Base;
+use lite_lib::component::{Children, Renderer};
 use lite_lib::components::{
     button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
@@ -37,35 +37,26 @@ pub fn run() -> Result<(), JsValue> {
     // Create the store
     let store = Store::new(data_reducer, State::default());
     // Create the provider
-    let _provider = Provider::new(store, "UnknowInstance".to_string());
-    // Create a Button element and add a on_click EventListener
-    let button = Button::new(
-        "My first button",
-        || log("An awsome mouse click"),
-        "UnknowInstance".to_string(),
-    );
-    button.render();
-    EventListener::new(SelectorType::Id, "button", "click", on_button_click);
-    // Create a Select element and add a on_change EventListener
-    let select = Select::new(
-        "My first select",
-        vec!["First", "Second", "Third"],
-        "UnknowInstance".to_string(),
-    );
-    select.render();
-    EventListener::new(SelectorType::Id, "select", "change", on_select_change);
-
+    let mut provider = Provider::new(store, document().body().unwrap());
+    // Create a Button element and add it as child to the provider
+    let button = Button::new("My first button", || log("An awsome mouse click"));
+    provider.add_child(Box::new(button));
+    // Create a Select element and add it as child to the provider
+    let select = Select::new("My first select", vec!["First", "Second", "Third"]);
+    provider.add_child(Box::new(select));
+    // Create a Form element with it FormElement and add it as child to the provider
     let form_element = FormElement::new(
         "form_element",
         FormElementType::Input,
         Some("Entrer un nom"),
     );
-    let form = Form::new(
-        "first_form",
-        vec![form_element],
-        "UnknowInstance".to_string(),
-    );
-    form.render();
+    let form = Form::new("first_form", vec![form_element]);
+    provider.add_child(Box::new(form));
+    // Render the provider, which will render it children, so the entire components of the app
+    provider.render();
+    // Add EventListener
+    EventListener::new(SelectorType::Id, "button", "click", on_button_click);
+    EventListener::new(SelectorType::Id, "select", "change", on_select_change);
 
     Ok(())
 }
@@ -81,12 +72,12 @@ fn on_select_change() {
 }
 
 fn on_button_click() {
-    let button = Button::new(
-        "My second button",
-        || log("An second awsome mouse click"),
-        "UnknowInstance".to_string(),
-    );
-    button.render();
+    // let button = Button::new(
+    //     "My second button",
+    //     || log("An second awsome mouse click"),
+    //     "UnknowInstance".to_string(),
+    // );
+    // button.render();
 }
 
 #[wasm_bindgen]

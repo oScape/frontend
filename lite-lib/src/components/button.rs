@@ -1,5 +1,4 @@
-use crate::component::Base;
-use crate::store::provider::UnknowInstance;
+use crate::component::Component;
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
@@ -8,19 +7,9 @@ use web_sys::{HtmlButtonElement, HtmlElement};
 pub struct Button {
     title: String,
     callback: fn(),
-    _parent: UnknowInstance,
 }
 
-impl Base for Button {
-    fn render(&self) {
-        document()
-            .body()
-            .unwrap()
-            .append_child(&self.create_element())
-            .unwrap();
-        // self.parent.append_child(&self.create_element()).unwrap();
-    }
-
+impl Component for Button {
     fn create_element(&self) -> HtmlElement {
         let callback = self.callback.clone();
         let closure = Closure::wrap(Box::new(callback) as Box<dyn Fn()>);
@@ -41,13 +30,9 @@ impl Base for Button {
 }
 
 impl Button {
-    pub fn new(title: &str, callback: fn(), parent: UnknowInstance) -> Button {
+    pub fn new(title: &str, callback: fn()) -> Button {
         let title = title.to_owned();
 
-        Button {
-            title,
-            callback,
-            _parent: parent,
-        }
+        Button { title, callback }
     }
 }
