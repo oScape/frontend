@@ -1,7 +1,7 @@
 use crate::component::{Component, Label};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
+use web_sys::{HtmlElement, HtmlDivElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
 
 pub struct Select {
     label: String,
@@ -10,6 +10,14 @@ pub struct Select {
 
 impl Component for Select {
     fn create_element(&self) -> HtmlElement {
+        // Create the wrapper
+        let wrapper = document()
+            .create_element("div")
+            .unwrap()
+            .dyn_into::<HtmlDivElement>()
+            .unwrap();
+        wrapper.set_id("select-wrapper");
+        let label = self.create_label();
         // Create the select element
         let select = document()
             .create_element("select")
@@ -29,7 +37,9 @@ impl Component for Select {
             select.append_child(&opt).unwrap();
         }
 
-        select.dyn_into::<HtmlElement>().unwrap()
+        wrapper.append_child(&label).unwrap();
+        wrapper.append_child(&select).unwrap();
+        wrapper.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
