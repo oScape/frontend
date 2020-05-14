@@ -1,4 +1,5 @@
 use crate::component::Component;
+use crate::store::{connect::Connect, provider::ConnectedComponent};
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::{closure::Closure, JsCast};
@@ -28,6 +29,14 @@ impl Component for Button {
         button.dyn_into::<HtmlElement>().unwrap()
     }
 }
+
+impl Connect for Button {
+    fn connect(&mut self, data: String) {
+        self.title = data;
+    }
+}
+
+impl ConnectedComponent for Button {}
 
 impl Button {
     pub fn new(title: &str, callback: fn()) -> Button {

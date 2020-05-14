@@ -3,7 +3,7 @@ use lite_lib::components::{
     button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
 use lite_lib::listener::EventListener;
-use lite_lib::store::{provider::Provider, store::Store};
+use lite_lib::store::{provider::Provider, store::Store, subscription::Subscription};
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
@@ -38,6 +38,10 @@ pub fn run() -> Result<(), JsValue> {
     let store = Store::new(data_reducer, State::default());
     // Create the provider
     let mut provider = Provider::new(store, document().body().unwrap());
+    let listener: Subscription<State> = |state: &State| {
+        log(&format!("Counter changed! New value: {}", state.data));
+    };
+    provider.connect_to_store(listener);
     // Create a Button element and add it as child to the provider
     let button = Button::new("My first button", || log("An awsome mouse click"));
     provider.add_child(Box::new(button));
@@ -57,6 +61,8 @@ pub fn run() -> Result<(), JsValue> {
     // Add EventListener
     EventListener::new(SelectorType::Id, "button", "click", on_button_click);
     EventListener::new(SelectorType::Id, "select", "change", on_select_change);
+
+    provider.dispatch_to_store(Action::Change("yolo".to_string()));
 
     Ok(())
 }

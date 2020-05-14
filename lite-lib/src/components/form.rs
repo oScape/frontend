@@ -1,4 +1,5 @@
 use crate::component::Component;
+use crate::store::{connect::Connect, provider::ConnectedComponent};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlFormElement, HtmlInputElement, HtmlLabelElement};
@@ -65,6 +66,14 @@ impl Component for Form {
         form.dyn_into::<HtmlElement>().unwrap()
     }
 }
+
+impl Connect for Form {
+    fn connect(&mut self, data: String) {
+        self.name = data;
+    }
+}
+
+impl ConnectedComponent for Form {}
 
 impl FormElement {
     pub fn new(name: &str, form_element_type: FormElementType, label: Option<&str>) -> FormElement {

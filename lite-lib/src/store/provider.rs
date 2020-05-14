@@ -1,13 +1,22 @@
-use super::store::Store;
+use super::{connect::Connect, store::Store, subscription::Subscription};
 use crate::component::{Children, Component, Renderer};
 use crate::utils::dom::*;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
+
+pub trait ConnectedComponent: Component + Connect {}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
 
 pub struct Provider<State, Action> {
     _store: Store<State, Action>,
     parent: HtmlElement,
-    children: Vec<Box<dyn Component>>,
+    children: Vec<Box<dyn ConnectedComponent>>,
 }
 
 impl<State, Action> Renderer for Provider<State, Action> {
@@ -34,7 +43,7 @@ impl<State, Action> Component for Provider<State, Action> {
 }
 
 impl<State, Action> Children for Provider<State, Action> {
-    fn add_child(&mut self, child: Box<dyn Component>) {
+    fn add_child(&mut self, child: Box<dyn ConnectedComponent>) {
         self.children.push(child);
     }
 }
@@ -46,5 +55,13 @@ impl<State, Action> Provider<State, Action> {
             parent,
             children: Vec::new(),
         }
+    }
+
+    pub fn connect_to_store(&mut self, listener: Subscription<State>) {
+        self._store.subscribe(listener);
+    }
+
+    pub fn dispatch_to_store(&mut self, action: Action) {
+        self._store.dispatch(action);
     }
 }

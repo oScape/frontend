@@ -1,7 +1,10 @@
 use crate::component::{Component, Label};
+use crate::store::{connect::Connect, provider::ConnectedComponent};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlElement, HtmlDivElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement};
+use web_sys::{
+    HtmlDivElement, HtmlElement, HtmlLabelElement, HtmlOptionElement, HtmlSelectElement,
+};
 
 pub struct Select {
     label: String,
@@ -57,6 +60,14 @@ impl Label for Select {
         label.dyn_into::<HtmlElement>().unwrap()
     }
 }
+
+impl Connect for Select {
+    fn connect(&mut self, data: String) {
+        self.label = data;
+    }
+}
+
+impl ConnectedComponent for Select {}
 
 impl Select {
     pub fn new(label: &str, options: Vec<&str>) -> Select {

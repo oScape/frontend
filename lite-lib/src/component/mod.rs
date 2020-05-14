@@ -1,3 +1,4 @@
+use crate::store::provider::ConnectedComponent;
 use web_sys::HtmlElement;
 
 pub trait Renderer {
@@ -13,5 +14,5 @@ pub trait Label {
 }
 
 pub trait Children {
-    fn add_child(&mut self, child: Box<dyn Component>);
+    fn add_child(&mut self, child: Box<dyn ConnectedComponent>);
 }
