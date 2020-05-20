@@ -7,7 +7,7 @@ use web_sys::{
 };
 
 pub struct Select {
-    label: String,
+    label: Option<String>,
     options: Vec<String>,
 }
 
@@ -20,7 +20,11 @@ impl Component for Select {
             .dyn_into::<HtmlDivElement>()
             .unwrap();
         wrapper.set_id("select-wrapper");
-        let label = self.create_label();
+
+        let label: Option<HtmlElement> = match &self.label {
+            Some(label) => Some(Select::create_label(label)),
+            None => None,
+        };
         // Create the select element
         let select = document()
             .create_element("select")
@@ -40,38 +44,44 @@ impl Component for Select {
             select.append_child(&opt).unwrap();
         }
 
-        wrapper.append_child(&label).unwrap();
+        match label {
+            Some(label) => {
+                wrapper.append_child(&label).unwrap();
+            }
+            None => {}
+        }
+
         wrapper.append_child(&select).unwrap();
         wrapper.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
 impl Label for Select {
-    fn create_label(&self) -> HtmlElement {
+    fn create_label(label: &String) -> HtmlElement {
         // Create the label element
-        let label = document()
+        let label_element = document()
             .create_element("label")
             .unwrap()
             .dyn_into::<HtmlLabelElement>()
             .unwrap();
-        label.set_inner_text(&self.label);
-        label.set_html_for("select");
+        label_element.set_inner_text(&label);
+        label_element.set_html_for("select");
 
-        label.dyn_into::<HtmlElement>().unwrap()
+        label_element.dyn_into::<HtmlElement>().unwrap()
     }
 }
 
 impl Connect for Select {
     fn connect(&mut self, data: String) {
-        self.label = data;
+        self.label = Some(data);
     }
 }
 
 impl ConnectedComponent for Select {}
 
 impl Select {
-    pub fn new(label: &str, options: Vec<&str>) -> Select {
-        let label = label.to_owned();
+    pub fn new(label: Option<&str>, options: Vec<&str>) -> Select {
+        let label = label.map(|label| label.to_owned());
         let options = options.iter().map(|s| s.to_string()).collect();
 
         Select { label, options }

@@ -10,7 +10,7 @@ pub trait Component {
 }
 
 pub trait Label {
-    fn create_label(&self) -> HtmlElement;
+    fn create_label(label: &String) -> HtmlElement;
 }
 
 pub trait Children {

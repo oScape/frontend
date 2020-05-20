@@ -78,7 +78,7 @@ impl ConnectedComponent for Form {}
 impl FormElement {
     pub fn new(name: &str, form_element_type: FormElementType, label: Option<&str>) -> FormElement {
         let name = name.to_owned();
-        let label: Option<String> = label.map(String::from);
+        let label = label.map(|label| label.to_owned());
 
         FormElement {
             name,
