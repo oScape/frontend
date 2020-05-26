@@ -34,28 +34,30 @@ fn data_reducer(_state: &State, action: &Action) -> State {
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
-    // Create the store
     let store = Store::new(data_reducer, State::default());
-    // Create the provider
     let mut provider = Provider::new(store, document().body().unwrap());
     // let listener: Subscription<State> = |state: &State| {
     //     log(&format!("Counter changed! New value: {}", state.data));
     // };
     // provider.connect_to_store(listener);
-    // // Create a Button element and add it as child to the provider
-    // let button = Button::new("My first button", || log("An awsome mouse click"));
-    // provider.add_child(Box::new(button));
-    // Create a Select element and add it as child to the provider
-    let select = Select::new(None, vec!["Driver schedule"]);
-    provider.add_child(Box::new(select));
-    // // Create a Form element with it FormElement and add it as child to the provider
-    // let form_element = FormElement::new(
-    //     "form_element",
-    //     FormElementType::Input,
-    //     Some("Entrer un nom"),
-    // );
-    // let form = Form::new("first_form", vec![form_element]);
-    // provider.add_child(Box::new(form));
+    let select_driver = Select::new(None, vec!["Driver schedule"]);
+    provider.add_child(Box::new(select_driver));
+
+    let button_create_driver = Button::new("Create driver", || log("I want to create a driver!"));
+    provider.add_child(Box::new(button_create_driver));
+
+    let form_element_enter_lastname = FormElement::new(
+        "form_element",
+        FormElementType::Input,
+        Some("Lastname"),
+    );
+    let form_element_enter_firstname = FormElement::new(
+        "form_element",
+        FormElementType::Input,
+        Some("Firstname"),
+    );
+    let form = Form::new("first_form", vec![form_element_enter_lastname, form_element_enter_firstname]);
+    provider.add_child(Box::new(form));
     // Render the provider, which will render it children, so the entire components of the app
     provider.render();
     // // Add EventListener
