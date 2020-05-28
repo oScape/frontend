@@ -1,11 +1,14 @@
-use lite_lib::component::{Children, Renderer};
+use js_sys::Function;
+use lite_lib::component::{Children, Component, Renderer};
 use lite_lib::components::{
     button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
+use lite_lib::layouts::modal::Modal;
 use lite_lib::listener::EventListener;
 use lite_lib::store::{provider::Provider, store::Store, subscription::Subscription};
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::{closure::Closure, JsCast};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{Request, RequestInit, RequestMode};
 
@@ -36,28 +39,19 @@ fn data_reducer(_state: &State, action: &Action) -> State {
 pub fn run() -> Result<(), JsValue> {
     let store = Store::new(data_reducer, State::default());
     let mut provider = Provider::new(store, document().body().unwrap());
+    let modal = Modal::new(document().body().unwrap());
+
     // let listener: Subscription<State> = |state: &State| {
     //     log(&format!("Counter changed! New value: {}", state.data));
     // };
     // provider.connect_to_store(listener);
+
     let select_driver = Select::new(None, vec!["Driver schedule"]);
     provider.add_child(Box::new(select_driver));
 
-    let button_create_driver = Button::new("Create driver", || log("I want to create a driver!"));
+    let button_create_driver = Button::new("Create driver", append_driver_form(modal));
     provider.add_child(Box::new(button_create_driver));
 
-    let form_element_enter_lastname = FormElement::new(
-        "form_element",
-        FormElementType::Input,
-        Some("Lastname"),
-    );
-    let form_element_enter_firstname = FormElement::new(
-        "form_element",
-        FormElementType::Input,
-        Some("Firstname"),
-    );
-    let form = Form::new("first_form", vec![form_element_enter_lastname, form_element_enter_firstname]);
-    provider.add_child(Box::new(form));
     // Render the provider, which will render it children, so the entire components of the app
     provider.render();
     // // Add EventListener
@@ -67,6 +61,24 @@ pub fn run() -> Result<(), JsValue> {
     // provider.dispatch_to_store(Action::Change("yolo".to_string()));
 
     Ok(())
+}
+
+fn append_driver_form(mut component: Modal) -> Function {
+    let cb = Closure::wrap(Box::new(move || {
+        let form_element_enter_lastname =
+            FormElement::new("form_element", FormElementType::Input, Some("Lastname"));
+        let form_element_enter_firstname =
+            FormElement::new("form_element", FormElementType::Input, Some("Firstname"));
+        let form = Form::new(
+            "first_form",
+            vec![form_element_enter_lastname, form_element_enter_firstname],
+        );
+        component.append_child(form);
+    }) as Box<dyn FnMut()>);
+
+    let res = cb.as_ref().to_owned().unchecked_into();
+    Closure::forget(cb);
+    res
 }
 
 // fn on_select_change() {

@@ -27,10 +27,6 @@ impl<State, Action> Renderer for Provider<State, Action> {
         }
         self.parent.append_child(&element).unwrap();
     }
-
-    fn render_as_modal(&self) {
-        
-    }
 }
 
 impl<State, Action> Component for Provider<State, Action> {

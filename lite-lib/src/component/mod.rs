@@ -3,8 +3,6 @@ use web_sys::HtmlElement;
 
 pub trait Renderer {
     fn render(&self);
-
-    fn render_as_modal(&self);
 }
 
 pub trait Component {
