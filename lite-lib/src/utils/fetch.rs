@@ -1,5 +1,5 @@
 use super::dom::*;
-use crate::store::{store::Store, subscription::Subscription};
+use crate::redux::{store::Store, subscription::Subscription};
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, Response};

@@ -1,5 +1,5 @@
 use crate::component::Component;
-use crate::store::{connect::Connect, provider::ConnectedComponent};
+use crate::redux::{connect::Connect, provider::ConnectedComponent};
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::JsCast;

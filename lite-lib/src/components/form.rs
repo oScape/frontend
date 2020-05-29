@@ -1,5 +1,5 @@
 use crate::component::Component;
-use crate::store::{connect::Connect, provider::ConnectedComponent};
+use crate::redux::{connect::Connect, provider::ConnectedComponent};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlFormElement, HtmlInputElement, HtmlLabelElement};

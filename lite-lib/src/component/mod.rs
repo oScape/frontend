@@ -1,4 +1,4 @@
-use crate::store::provider::ConnectedComponent;
+use crate::redux::provider::ConnectedComponent;
 use web_sys::HtmlElement;
 
 pub trait Renderer {
