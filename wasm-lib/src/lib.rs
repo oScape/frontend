@@ -5,8 +5,9 @@ use lite_lib::components::{
 };
 use lite_lib::layouts::modal::Modal;
 use lite_lib::listener::EventListener;
-use lite_lib::store::{provider::Provider, store::Store, subscription::Subscription};
+use lite_lib::redux::{provider::Provider, store::Store, subscription::Subscription};
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
+use std::sync::{Arc, Mutex};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{closure::Closure, JsCast};
 use wasm_bindgen_futures::spawn_local;
@@ -38,22 +39,33 @@ fn data_reducer(_state: &State, action: &Action) -> State {
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
     let store = Store::new(data_reducer, State::default());
-    let mut provider = Provider::new(store, document().body().unwrap());
+    let provider = Arc::new(Mutex::new(Provider::new(store, document().body().unwrap())));
     let modal = Modal::new(document().body().unwrap());
 
-    // let listener: Subscription<State> = |state: &State| {
-    //     log(&format!("Counter changed! New value: {}", state.data));
-    // };
-    // provider.connect_to_store(listener);
+    let listener: Subscription<State> = |state: &State| {
+        log(&format!("Counter changed! New value: {}", state.data));
+    };
+    provider.lock().unwrap().connect_to_store(listener);
 
     let select_driver = Select::new(None, vec!["Driver schedule"]);
-    provider.add_child(Box::new(select_driver));
+    provider.lock().unwrap().add_child(Box::new(select_driver));
 
     let button_create_driver = Button::new("Create driver", append_driver_form(modal));
-    provider.add_child(Box::new(button_create_driver));
+    provider
+        .lock()
+        .unwrap()
+        .add_child(Box::new(button_create_driver));
+
+    let provider_2 = provider.clone();
+
+    let button_change_title = Button::new("Change title", change_title(provider_2));
+    provider
+        .lock()
+        .unwrap()
+        .add_child(Box::new(button_change_title));
 
     // Render the provider, which will render it children, so the entire components of the app
-    provider.render();
+    provider.lock().unwrap().render();
     // // Add EventListener
     // EventListener::new(SelectorType::Id, "button", "click", on_button_click);
     // EventListener::new(SelectorType::Id, "select", "change", on_select_change);
@@ -74,6 +86,19 @@ fn append_driver_form(mut component: Modal) -> Function {
             vec![form_element_enter_lastname, form_element_enter_firstname],
         );
         component.append_child(form);
+    }) as Box<dyn FnMut()>);
+
+    let res = cb.as_ref().to_owned().unchecked_into();
+    Closure::forget(cb);
+    res
+}
+
+fn change_title(provider: Arc<Mutex<Provider<State, Action>>>) -> Function {
+    let cb = Closure::wrap(Box::new(move || {
+        provider
+            .lock()
+            .unwrap()
+            .dispatch_to_store(Action::Change("yolo".to_string()));
     }) as Box<dyn FnMut()>);
 
     let res = cb.as_ref().to_owned().unchecked_into();
