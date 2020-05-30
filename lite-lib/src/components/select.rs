@@ -71,13 +71,17 @@ impl Label for Select {
     }
 }
 
-impl Connect for Select {
+impl<State> Connect<State> for Select {
     fn connect(&mut self, data: String) {
         self.label = Some(data);
     }
+
+    // fn dispatch(&mut self, state: &State) {}
 }
 
-impl ConnectedComponent for Select {}
+impl<State> ConnectedComponent<State> for Select {
+    fn dispatch(&mut self, state: &State) {}
+}
 
 impl Select {
     pub fn new(label: Option<&str>, options: Vec<&str>) -> Select {

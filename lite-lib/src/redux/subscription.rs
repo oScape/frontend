@@ -11,4 +11,4 @@
 ///
 /// store.subscribe(listener);
 /// ```
-pub type Subscription<State> = fn(&State);
+pub type Subscription<State> = Box<dyn Fn(&State)>;

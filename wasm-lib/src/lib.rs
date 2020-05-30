@@ -1,11 +1,11 @@
 use js_sys::Function;
-use lite_lib::component::{Children, Component, Renderer};
+use lite_lib::component::{Children, Component, Renderer, Title};
 use lite_lib::components::{
-    button::Button, form::Form, form::FormElement, form::FormElementType, select::Select,
+    button::Button, button::ConnectedButton, form::Form, form::FormElement, form::FormElementType, select::Select,
 };
 use lite_lib::layouts::modal::Modal;
 use lite_lib::listener::EventListener;
-use lite_lib::redux::{provider::Provider, store::Store, subscription::Subscription};
+use lite_lib::redux::{provider::Provider, store::Store, subscription::Subscription, provider::ConnectedComponent};
 use lite_lib::utils::{dom::document, fetch::fetch_and_store_data, query_selector::SelectorType};
 use std::sync::{Arc, Mutex};
 use wasm_bindgen::prelude::*;
@@ -21,7 +21,7 @@ extern "C" {
     fn log(s: &str);
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 struct State {
     data: String,
 }
@@ -42,19 +42,26 @@ pub fn run() -> Result<(), JsValue> {
     let provider = Arc::new(Mutex::new(Provider::new(store, document().body().unwrap())));
     let modal = Modal::new(document().body().unwrap());
 
-    let listener: Subscription<State> = |state: &State| {
-        log(&format!("Counter changed! New value: {}", state.data));
-    };
-    provider.lock().unwrap().connect_to_store(listener);
-
     let select_driver = Select::new(None, vec!["Driver schedule"]);
-    provider.lock().unwrap().add_child(Box::new(select_driver));
-
-    let button_create_driver = Button::new("Create driver", append_driver_form(modal));
     provider
         .lock()
         .unwrap()
-        .add_child(Box::new(button_create_driver));
+        .add_child(Box::new(Arc::new(Mutex::new(select_driver))));
+
+    let button_create_driver: Button<State> =
+        Button::new("Create driver", append_driver_form(modal));
+    let button = Arc::new(Mutex::new(button_create_driver));
+    
+    provider.lock().unwrap().connect_to_store(listener(Arc::clone(&button)));
+    
+    let moved_button = Arc::clone(&button);
+    let callback = Box::new(move |button: &mut Button<State>, state: &State| {
+        button.set_title(&state.data)
+    });
+    button.lock().unwrap().add_map_dispatch_to_props(Some(callback));
+    
+    let button_clone = Arc::clone(&button);
+    provider.lock().unwrap().add_child(Box::new(button_clone));
 
     let provider_2 = provider.clone();
 
@@ -62,7 +69,7 @@ pub fn run() -> Result<(), JsValue> {
     provider
         .lock()
         .unwrap()
-        .add_child(Box::new(button_change_title));
+        .add_child(Box::new(Arc::new(Mutex::new(button_change_title))));
 
     // Render the provider, which will render it children, so the entire components of the app
     provider.lock().unwrap().render();
@@ -70,7 +77,7 @@ pub fn run() -> Result<(), JsValue> {
     // EventListener::new(SelectorType::Id, "button", "click", on_button_click);
     // EventListener::new(SelectorType::Id, "select", "change", on_select_change);
 
-    // provider.dispatch_to_store(Action::Change("yolo".to_string()));
+    provider.lock().unwrap().dispatch_to_store(Action::Change("yolo".to_string()));
 
     Ok(())
 }
@@ -105,6 +112,29 @@ fn change_title(provider: Arc<Mutex<Provider<State, Action>>>) -> Function {
     Closure::forget(cb);
     res
 }
+
+// fn un_truc_au_dessus(button: impl ConnectedComponent<State>) {
+    
+// }
+
+fn listener(button: Arc<Mutex<Button<State>>>) -> Subscription<State> {
+    Box::new(move |state| {
+        button.lock().unwrap().dispatch(state)
+    })
+}
+
+// fn map_dispatch_to_props_button(button: Arc<Mutex<Button<State>>>) {
+//     let callback = Box::new(move |state: &State| {
+//         button.lock().unwrap().set_title(&state.data)
+//     });
+//     button.lock().unwrap().add_map_dispatch_to_props(Some(callback));
+// }
+
+// fn listener(button_create_driver: &'static mut Button<State>) -> Subscription<State> {
+//     Box::new(|state| {
+//         button_create_driver.dispatch(state);
+//     })
+// }
 
 // fn on_select_change() {
 //     let mut req = RequestInit::new();

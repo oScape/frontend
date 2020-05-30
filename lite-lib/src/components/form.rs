@@ -67,13 +67,17 @@ impl Component for Form {
     }
 }
 
-impl Connect for Form {
+impl<State> Connect<State> for Form {
     fn connect(&mut self, data: String) {
         self.name = data;
     }
+
+    // fn dispatch(&mut self, state: &State) {}
 }
 
-impl ConnectedComponent for Form {}
+impl<State> ConnectedComponent<State> for Form {
+    fn dispatch(&mut self, state: &State) {}
+}
 
 impl FormElement {
     pub fn new(name: &str, form_element_type: FormElementType, label: Option<&str>) -> FormElement {
