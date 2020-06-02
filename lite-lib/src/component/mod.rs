@@ -13,6 +13,6 @@ pub trait Label {
     fn create_label(label: &String) -> HtmlElement;
 }
 
-pub trait Children {
-    fn add_child(&mut self, child: Box<dyn ConnectedComponent>);
+pub trait Children<State> {
+    fn add_child(&mut self, child: Box<dyn ConnectedComponent<State>>);
 }

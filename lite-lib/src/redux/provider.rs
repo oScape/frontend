@@ -1,11 +1,12 @@
-use super::{connect::Connect, store::Store, subscription::Subscription};
+use super::{connect::Connect, store::Store, subscription::Subscription, map_dispatch_to_props::MapDispatchToProps};
 use crate::component::{Children, Component, Renderer};
 use crate::utils::dom::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
+use std::sync::{Mutex, Arc};
 
-pub trait ConnectedComponent: Component + Connect {}
+pub trait ConnectedComponent<State>: Component + Connect<State> {}
 
 #[wasm_bindgen]
 extern "C" {
@@ -16,7 +17,7 @@ extern "C" {
 pub struct Provider<State, Action> {
     _store: Store<State, Action>,
     parent: HtmlElement,
-    children: Vec<Box<dyn ConnectedComponent>>,
+    children: Vec<Box<dyn ConnectedComponent<State>>>,
 }
 
 impl<State, Action> Renderer for Provider<State, Action> {
@@ -42,8 +43,8 @@ impl<State, Action> Component for Provider<State, Action> {
     }
 }
 
-impl<State, Action> Children for Provider<State, Action> {
-    fn add_child(&mut self, child: Box<dyn ConnectedComponent>) {
+impl<State, Action> Children<State> for Provider<State, Action> {
+    fn add_child(&mut self, child: Box<dyn ConnectedComponent<State>>) {
         self.children.push(child);
     }
 }
@@ -57,8 +58,10 @@ impl<State, Action> Provider<State, Action> {
         }
     }
 
-    pub fn connect_to_store(&mut self, listener: Subscription<State>) {
-        self._store.subscribe(listener);
+    pub fn connect_to_store(&mut self, state: &State) {
+        for child in &self.children {
+            child.connect(state);
+        }
     }
 
     pub fn dispatch_to_store(&mut self, action: Action) {

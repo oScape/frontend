@@ -1,5 +1,5 @@
 use crate::component::{Component, Label};
-use crate::redux::{connect::Connect, provider::ConnectedComponent};
+use crate::redux::{connect::Connect, provider::ConnectedComponent, map_dispatch_to_props::MapDispatchToProps};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{
@@ -71,13 +71,18 @@ impl Label for Select {
     }
 }
 
-impl Connect for Select {
-    fn connect(&mut self, data: String) {
-        self.label = Some(data);
+impl<State> Connect<State> for Select {
+    fn connect(&self, state: &State) {
+        &self.disptach(state);
     }
 }
 
-impl ConnectedComponent for Select {}
+impl<State> MapDispatchToProps<State> for Select {
+    fn disptach(&self, state: &State) {
+    }
+}
+
+impl<State> ConnectedComponent<State> for Select {}
 
 impl Select {
     pub fn new(label: Option<&str>, options: Vec<&str>) -> Select {

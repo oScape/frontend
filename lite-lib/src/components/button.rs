@@ -1,5 +1,5 @@
 use crate::component::Component;
-use crate::redux::{connect::Connect, provider::ConnectedComponent};
+use crate::redux::{connect::Connect, provider::ConnectedComponent, map_dispatch_to_props::MapDispatchToProps};
 use crate::utils::dom::*;
 use js_sys::Function;
 use wasm_bindgen::JsCast;
@@ -26,13 +26,18 @@ impl Component for Button {
     }
 }
 
-impl Connect for Button {
-    fn connect(&mut self, data: String) {
-        self.title = data;
+impl<State> Connect<State> for Button {
+    fn connect(&self, state: &State) {
+        &self.disptach(state);
     }
 }
 
-impl ConnectedComponent for Button {}
+impl<State> MapDispatchToProps<State> for Button {
+    fn disptach(&self, state: &State) {
+    }
+}
+
+impl<State> ConnectedComponent<State> for Button {}
 
 impl Button {
     pub fn new(title: &str, callback: Function) -> Button {

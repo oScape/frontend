@@ -29,11 +29,11 @@ pub async fn fetch_and_store_data(request: Request) {
     // Create the store
     let mut store = Store::new(data_reducer, State::default());
 
-    let listener: Subscription<State> = |state: &State| {
-        log(&format!("Counter changed! New value: {}", state.data));
-    };
+    // let listener: Subscription<State> = |state: &State| {
+    //     log(&format!("Counter changed! New value: {}", state.data));
+    // };
 
-    store.subscribe(listener);
+    // store.subscribe(listener);
 
     // Fetch data from the server
     let response = JsFuture::from(window().fetch_with_request(&request))

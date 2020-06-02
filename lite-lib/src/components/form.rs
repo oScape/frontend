@@ -1,5 +1,5 @@
 use crate::component::Component;
-use crate::redux::{connect::Connect, provider::ConnectedComponent};
+use crate::redux::{connect::Connect, provider::ConnectedComponent, map_dispatch_to_props::MapDispatchToProps};
 use crate::utils::dom::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, HtmlFormElement, HtmlInputElement, HtmlLabelElement};
@@ -67,13 +67,18 @@ impl Component for Form {
     }
 }
 
-impl Connect for Form {
-    fn connect(&mut self, data: String) {
-        self.name = data;
+impl<State> Connect<State> for Form {
+    fn connect(&self, state: &State) {
+        &self.disptach(state);
     }
 }
 
-impl ConnectedComponent for Form {}
+impl<State> MapDispatchToProps<State> for Form {
+    fn disptach(&self, state: &State) {
+    }
+}
+
+impl<State> ConnectedComponent<State> for Form {}
 
 impl FormElement {
     pub fn new(name: &str, form_element_type: FormElementType, label: Option<&str>) -> FormElement {
