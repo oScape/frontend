@@ -7,3 +7,4 @@
 // pub mod component;
 
 pub mod text;
+pub mod storage;
