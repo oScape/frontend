@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use crate::text::Text;
 
 pub struct Storage {
     state: BTreeMap<String, String>
@@ -16,5 +17,12 @@ impl Storage {
             Some(text) => Some(String::from(&*text)),
             None => None,
         }
+    }
+
+    pub fn update_element(&mut self, uid: String, data: String) {
+        if let Some(text) = self.state.get_mut(uid.as_str()) {
+            *text = String::from(&*data);
+        };
+        Text::update_element(String::from(uid), data);
     }
 }

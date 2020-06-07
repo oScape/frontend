@@ -14,9 +14,9 @@ pub fn run() -> Result<(), JsValue> {
     let text_element = Text::new(String::from("text"));
     text_element.render_element();
 
-    Text::update_element(String::from("an_awsome_uid"));
+    let mut storage = Storage::new(text_element.build_tree_map());
 
-    Storage::new(text_element.build_tree_map());
+    storage.update_element(String::from("an_awsome_uid"), String::from("self.text.as_str()"));
 
     Ok(())
 }

@@ -43,7 +43,7 @@ impl Text {
         &self
     }
 
-    pub fn update_element(uid: String) {
+    pub fn update_element(uid: String, data: String) {
         let old_element = window()
             .unwrap()
             .document()
@@ -52,7 +52,7 @@ impl Text {
             .unwrap()
             .dyn_into::<HtmlDivElement>()
             .unwrap();
-        old_element.set_inner_text("self.text.as_str()");
+        old_element.set_inner_text(data.as_str());
     }
 
     pub fn build_tree_map(&self) -> BTreeMap<String, String> {
