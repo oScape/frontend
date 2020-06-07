@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use lite_lib::{storage::Storage, text::Text};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -16,7 +16,10 @@ pub fn run() -> Result<(), JsValue> {
 
     let mut storage = Storage::new(text_element.build_tree_map());
 
-    storage.update_element(String::from("an_awsome_uid"), String::from("self.text.as_str()"));
+    storage.update_element(
+        String::from("an_awsome_uid"),
+        String::from("self.text.as_str()"),
+    );
 
     Ok(())
 }

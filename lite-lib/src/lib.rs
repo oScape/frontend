@@ -2,9 +2,9 @@
 // pub mod layouts;
 // pub mod listener;
 // pub mod redux;
-// pub mod utils;
+pub mod utils;
 
 // pub mod component;
 
-pub mod text;
 pub mod storage;
+pub mod text;

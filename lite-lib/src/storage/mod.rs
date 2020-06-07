@@ -1,15 +1,13 @@
-use std::collections::BTreeMap;
 use crate::text::Text;
+use std::collections::BTreeMap;
 
 pub struct Storage {
-    state: BTreeMap<String, String>
+    state: BTreeMap<String, String>,
 }
 
 impl Storage {
     pub fn new(state: BTreeMap<String, String>) -> Storage {
-        Storage {
-            state
-        }
+        Storage { state }
     }
 
     pub fn get_element(&self, uid: String) -> Option<String> {
