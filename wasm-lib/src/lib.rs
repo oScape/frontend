@@ -1,5 +1,7 @@
-use lite_lib::{storage::Storage, text::Text};
-use wasm_bindgen::prelude::*;
+use lite_lib::{storage::Storage, text::Text, button::Button};
+use wasm_bindgen::{JsCast, prelude::*};
+use js_sys::Function;
+use std::sync::{Mutex, Arc};
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,14 +16,25 @@ pub fn run() -> Result<(), JsValue> {
     let text_element = Text::new(String::from("text"));
     text_element.render_element();
 
-    let mut storage = Storage::new(text_element.build_tree_map());
+    let storage = Arc::new(Mutex::new(Storage::new(text_element.build_tree_map())));
 
-    storage.update_element(
-        String::from("an_awsome_uid"),
-        String::from("self.text.as_str()"),
-    );
+    let button_element = Button::new(String::from("button"), on_click_action(storage));
+    button_element.render_element();
 
     Ok(())
+}
+
+fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
+    let cb = Closure::wrap(Box::new(move || {
+        storage.lock().unwrap().update_element(
+            String::from("an_awsome_uid"),
+            String::from("self.text.as_str()"),
+        );
+    }) as Box<dyn FnMut()>);
+
+    let res = cb.as_ref().to_owned().unchecked_into();
+    Closure::forget(cb);
+    res
 }
 
 // use js_sys::Function;
