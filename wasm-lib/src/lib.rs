@@ -1,8 +1,5 @@
 use wasm_bindgen::prelude::*;
-use lite_lib::text::Text;
-use lite_lib::storage::Storage;
-use web_sys::window;
-use std::collections::BTreeMap;
+use lite_lib::{storage::Storage, text::Text};
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,24 +12,11 @@ extern "C" {
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
     let text_element = Text::new(String::from("text"));
-    let mut btreemap = BTreeMap::new();
-    btreemap.insert(String::from("div"), text_element);
+    text_element.render_element();
 
-    let storage = Storage::new(btreemap);
-    let text_element = text_element.render_element();
+    Text::update_element(String::from("an_awsome_uid"));
 
-
-    window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .body()
-        .unwrap()
-        .append_child(&text_element)
-        .unwrap();
-
-    let text_element = Text::new(String::from("text"));
-    text_element.update_element(String::from("div"));
+    Storage::new(text_element.build_tree_map());
 
     Ok(())
 }
