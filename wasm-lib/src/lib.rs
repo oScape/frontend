@@ -36,6 +36,7 @@ fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from("uid"), String::from("an_awsome_uid"));
         btreemap.insert(String::from("text"), String::from("self.text.as_str()"));
+        btreemap.insert(String::from("element_type"), String::from("text"));
 
         storage.lock().unwrap().update_element(btreemap);
     }) as Box<dyn FnMut()>);

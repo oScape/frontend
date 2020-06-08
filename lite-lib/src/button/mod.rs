@@ -40,12 +40,12 @@ impl Button {
         &self
     }
 
-    pub fn update_element(uid: String, text: String, on_click: Function) {
-        let old_element = query_selector(SelectorType::Id, uid.as_str())
+    pub fn update_element(btreemap: BTreeMap<String, String>) {
+        let old_element = query_selector(SelectorType::Id, btreemap.get("uid").unwrap().as_str())
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
-        old_element.set_onclick(Some(&on_click));
-        old_element.set_inner_text(text.as_str());
+        // old_element.set_onclick(Some(&on_click));
+        old_element.set_inner_text(btreemap.get("text").unwrap().as_str());
     }
 
     // pub fn build_tree_map(&self) -> BTreeMap<String, String> {

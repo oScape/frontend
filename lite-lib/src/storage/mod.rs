@@ -1,5 +1,11 @@
-use crate::text::Text;
+use crate::{
+    button::Button,
+    text::Text,
+    utils::query_selector::{query_selector, SelectorType},
+};
 use std::collections::BTreeMap;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlButtonElement, HtmlDivElement, HtmlElement};
 
 #[derive(Default, Clone)]
 pub struct Storage {
@@ -44,6 +50,10 @@ impl Storage {
     }
 
     fn dispatch(btreemap: BTreeMap<String, String>) {
-        Text::update_element(btreemap);
+        match btreemap.get("element_type").unwrap().as_str() {
+            "text" => Text::update_element(btreemap),
+            "button" => Button::update_element(btreemap),
+            _ => (),
+        }
     }
 }

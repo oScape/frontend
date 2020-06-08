@@ -43,6 +43,7 @@ impl Text {
     pub fn build_tree_map(&self) -> BTreeMap<String, String> {
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from("uid"), String::from(&*self.uid));
+        btreemap.insert(String::from("element_type"), String::from("text"));
         btreemap.insert(String::from("text"), String::from(&*self.text));
 
         btreemap
