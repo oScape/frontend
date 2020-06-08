@@ -1,26 +1,38 @@
-use crate::text::Text;
-use std::collections::BTreeMap;
+use std::collections::{BTreeSet, BTreeMap};
+use std::mem;
 
+#[derive(Default, Clone)]
 pub struct Storage {
-    state: BTreeMap<String, String>,
+    state: Vec<BTreeMap<String, String>>,
 }
 
 impl Storage {
-    pub fn new(state: BTreeMap<String, String>) -> Storage {
-        Storage { state }
+    pub fn new() -> Storage {
+        Storage::default()
     }
 
-    pub fn get_element(&self, uid: String) -> Option<String> {
-        match self.state.get(uid.as_str()) {
-            Some(text) => Some(String::from(&*text)),
-            None => None,
+    pub fn add_btreemap(&mut self, btreemap: BTreeMap<String, String>) {
+        self.state.push(btreemap);
+    }
+
+    pub fn get_element(&self, uid: String) -> Option<BTreeMap<String, String>> {
+        let mut result = None;
+        for btreemap in self.state.iter() {
+            if let Some(_) = btreemap.get(uid.as_str()) {
+                result = Some(btreemap.clone())
+            }
         }
+
+        result
     }
 
-    pub fn update_element(&mut self, uid: String, data: String) {
-        if let Some(text) = self.state.get_mut(uid.as_str()) {
-            *text = String::from(&*data);
-        };
-        Text::update_element(String::from(uid), data);
+    pub fn update_element(&mut self, new_btreemap: BTreeMap<String, String>) {
+        if let Some(uid) = new_btreemap.get("uid") {
+            for btreemap in self.state.iter_mut() {
+                if let Some(test) = btreemap.get_mut(uid) {
+                    mem::replace(&mut new_btreemap.clone(), btreemap)
+                }
+            }
+        }
     }
 }

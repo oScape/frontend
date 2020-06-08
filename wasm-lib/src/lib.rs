@@ -16,7 +16,8 @@ pub fn run() -> Result<(), JsValue> {
     let text_element = Text::new(String::from("text"));
     text_element.render_element();
 
-    let storage = Arc::new(Mutex::new(Storage::new(text_element.build_tree_map())));
+    let storage = Arc::new(Mutex::new(Storage::new()));
+    storage.lock().unwrap().add_btreemap(text_element.build_tree_map());
 
     let button_element = Button::new(String::from("button"), on_click_action(storage));
     button_element.render_element();
