@@ -1,6 +1,6 @@
 use crate::utils::dom::document;
-use crate::utils::query_selector::{query_selector, SelectorType};
-use std::collections::BTreeMap;
+use crate::{storage::Storage, utils::query_selector::{query_selector, SelectorType}};
+use std::{sync::MutexGuard, collections::BTreeMap};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlButtonElement, HtmlElement};
 use js_sys::Function;
@@ -28,18 +28,27 @@ impl Button {
         element.set_inner_text(self.text.as_str());
 
         let element = element.dyn_into::<HtmlElement>().unwrap();
-
         document().body().unwrap().append_child(&element).unwrap();
 
         &self
     }
 
-    // pub fn update_element(uid: String, data: String) {
-    //     let old_element = query_selector(SelectorType::Id, uid.as_str())
-    //         .dyn_into::<HtmlDivElement>()
-    //         .unwrap();
-    //     old_element.set_inner_text(data.as_str());
-    // }
+    pub fn dispatch(mut storage: MutexGuard<Storage>, uid: String, text: String, on_click: Function) {
+        // storage.update_element(
+        //     uid,
+        //     text,
+        //     on_click
+        // );
+        Button::update_element(uid, text, on_click);
+    }
+
+    pub fn update_element(uid: String, text: String, on_click: Function) {
+        let old_element = query_selector(SelectorType::Id, uid.as_str())
+            .dyn_into::<HtmlButtonElement>()
+            .unwrap();
+        old_element.set_onclick(Some(&on_click));
+        old_element.set_inner_text(text.as_str());
+    }
 
     // pub fn build_tree_map(&self) -> BTreeMap<String, String> {
     //     let mut btreemap = BTreeMap::new();

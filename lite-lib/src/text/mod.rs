@@ -1,6 +1,6 @@
 use crate::utils::dom::document;
-use crate::utils::query_selector::{query_selector, SelectorType};
-use std::collections::BTreeMap;
+use crate::{storage::Storage, utils::query_selector::{query_selector, SelectorType}};
+use std::{sync::{MutexGuard}, collections::BTreeMap};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
 
@@ -22,21 +22,27 @@ impl Text {
             .dyn_into::<HtmlDivElement>()
             .unwrap();
         element.set_id(self.uid.as_str());
-
         element.set_inner_text(self.text.as_str());
 
         let element = element.dyn_into::<HtmlElement>().unwrap();
-
         document().body().unwrap().append_child(&element).unwrap();
 
         &self
     }
 
-    pub fn update_element(uid: String, data: String) {
+    pub fn dispatch(mut storage: MutexGuard<Storage>, uid: String, text: String) {
+        // storage.update_element(
+        //     uid,
+        //     text,
+        // );
+        Text::update_element(uid, text);
+    }
+
+    pub fn update_element(uid: String, text: String) {
         let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlDivElement>()
             .unwrap();
-        old_element.set_inner_text(data.as_str());
+        old_element.set_inner_text(text.as_str());
     }
 
     pub fn build_tree_map(&self) -> BTreeMap<String, String> {

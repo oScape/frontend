@@ -26,9 +26,10 @@ pub fn run() -> Result<(), JsValue> {
 
 fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
     let cb = Closure::wrap(Box::new(move || {
-        storage.lock().unwrap().update_element(
-            String::from("an_awsome_uid"),
-            String::from("self.text.as_str()"),
+        Text::dispatch(
+            storage.lock().unwrap(), 
+            String::from("an_awsome_uid"), 
+            String::from("self.text.as_str()")
         );
     }) as Box<dyn FnMut()>);
 
