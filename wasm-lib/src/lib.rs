@@ -1,7 +1,10 @@
-use lite_lib::{storage::Storage, text::Text, button::Button};
-use wasm_bindgen::{JsCast, prelude::*};
 use js_sys::Function;
-use std::sync::{Mutex, Arc};
+use lite_lib::{button::Button, storage::Storage, text::Text};
+use std::{
+    collections::BTreeMap,
+    sync::{Arc, Mutex},
+};
+use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen]
 extern "C" {
@@ -17,7 +20,10 @@ pub fn run() -> Result<(), JsValue> {
     text_element.render_element();
 
     let storage = Arc::new(Mutex::new(Storage::new()));
-    storage.lock().unwrap().add_btreemap(text_element.build_tree_map());
+    storage
+        .lock()
+        .unwrap()
+        .add_btreemap(text_element.build_tree_map());
 
     let button_element = Button::new(String::from("button"), on_click_action(storage));
     button_element.render_element();
@@ -27,11 +33,11 @@ pub fn run() -> Result<(), JsValue> {
 
 fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
     let cb = Closure::wrap(Box::new(move || {
-        Text::dispatch(
-            storage.lock().unwrap(), 
-            String::from("an_awsome_uid"), 
-            String::from("self.text.as_str()")
-        );
+        let mut btreemap = BTreeMap::new();
+        btreemap.insert(String::from("uid"), String::from("an_awsome_uid"));
+        btreemap.insert(String::from("text"), String::from("self.text.as_str()"));
+
+        storage.lock().unwrap().update_element(btreemap);
     }) as Box<dyn FnMut()>);
 
     let res = cb.as_ref().to_owned().unchecked_into();

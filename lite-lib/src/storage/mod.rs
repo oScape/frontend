@@ -1,5 +1,5 @@
-use std::collections::{BTreeSet, BTreeMap};
-use std::mem;
+use crate::text::Text;
+use std::collections::BTreeMap;
 
 #[derive(Default, Clone)]
 pub struct Storage {
@@ -27,12 +27,23 @@ impl Storage {
     }
 
     pub fn update_element(&mut self, new_btreemap: BTreeMap<String, String>) {
+        // I found the value of the uid key
         if let Some(uid) = new_btreemap.get("uid") {
+            // for each btreemap in self.state
             for btreemap in self.state.iter_mut() {
-                if let Some(test) = btreemap.get_mut(uid) {
-                    mem::replace(&mut new_btreemap.clone(), btreemap)
+                // if one have
+                if btreemap.get("uid") == Some(&uid.clone()) {
+                    if let Some(text) = btreemap.get_mut("text") {
+                        let btm = new_btreemap.clone();
+                        *text = String::from(btm.get("text").unwrap());
+                        Storage::dispatch(btm)
+                    }
                 }
             }
         }
+    }
+
+    fn dispatch(btreemap: BTreeMap<String, String>) {
+        Text::update_element(btreemap);
     }
 }

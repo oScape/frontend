@@ -6,6 +6,6 @@ pub mod utils;
 
 // pub mod component;
 
+pub mod button;
 pub mod storage;
 pub mod text;
-pub mod button;

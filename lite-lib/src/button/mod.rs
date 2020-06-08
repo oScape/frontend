@@ -1,20 +1,27 @@
 use crate::utils::dom::document;
-use crate::{storage::Storage, utils::query_selector::{query_selector, SelectorType}};
-use std::{sync::MutexGuard, collections::BTreeMap};
+use crate::{
+    storage::Storage,
+    utils::query_selector::{query_selector, SelectorType},
+};
+use js_sys::Function;
+use std::{collections::BTreeMap, sync::MutexGuard};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlButtonElement, HtmlElement};
-use js_sys::Function;
 
 pub struct Button {
     uid: String,
     text: String,
-    on_click: Function
+    on_click: Function,
 }
 
 impl Button {
     pub fn new(text: String, on_click: Function) -> Button {
         let uid = String::from("an_awsome_uid");
-        Button { text, on_click, uid }
+        Button {
+            text,
+            on_click,
+            uid,
+        }
     }
 
     pub fn render_element(&self) -> &Button {
@@ -31,15 +38,6 @@ impl Button {
         document().body().unwrap().append_child(&element).unwrap();
 
         &self
-    }
-
-    pub fn dispatch(mut storage: MutexGuard<Storage>, uid: String, text: String, on_click: Function) {
-        // storage.update_element(
-        //     uid,
-        //     text,
-        //     on_click
-        // );
-        Button::update_element(uid, text, on_click);
     }
 
     pub fn update_element(uid: String, text: String, on_click: Function) {
