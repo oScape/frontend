@@ -35,13 +35,10 @@ impl Storage {
     }
 
     pub fn update_state(&mut self, mut new_btreemap: BTreeMap<String, ItemDTO>) {
-        for (new_uid, new_item) in new_btreemap.clone().iter_mut() {
+        for (new_uid, _) in new_btreemap.clone().iter() {
             for old_btreemap in self.state.iter_mut() {
-                for (old_uid, old_item) in old_btreemap.clone().iter() {
+                for (old_uid, _) in old_btreemap.clone().iter() {
                     if old_uid == new_uid {
-                        if new_item.element_type == "button" {
-                            new_item.on_click = old_item.on_click.clone();
-                        }
                         old_btreemap.clear();
                         old_btreemap.append(&mut new_btreemap);
                     }

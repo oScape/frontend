@@ -16,7 +16,7 @@ pub struct Button {
 
 impl Button {
     pub fn new(text: String, on_click: Function) -> Button {
-        let uid = String::from("an_awsome_uid");
+        let uid = String::from("an_uid");
         Button {
             text,
             on_click,
@@ -44,7 +44,9 @@ impl Button {
         let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
-        old_element.set_onclick(Some(&item.on_click.unwrap()));
+        if let Some(callback) = item.on_click {
+            old_element.set_onclick(Some(&callback));
+        }
         old_element.set_inner_text(item.text.as_str());
     }
 
