@@ -10,16 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 lite-lib = { path = "../lite-lib" }
 wasm-bindgen = "0.2.62"
-wasm-bindgen-futures = "0.4.11"
 js-sys = "0.3.37"
-
-[dependencies.web-sys]
-version = "0.3.4"
-features = [
-    'Request',
-    'RequestInit',
-    'RequestMode',
-]
 
 [profile.release]
 opt-level = "s"

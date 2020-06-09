@@ -17,13 +17,5 @@ features = [
     'HtmlElement',
     'HtmlButtonElement',
     'HtmlDivElement',
-    'HtmlFormElement',
-    'HtmlInputElement',
-    'HtmlLabelElement',
-    'HtmlOptionElement',
-    'HtmlSelectElement',
-    'Window',
-    'EventTarget',
-    'Response',
-    'Request'
+    'Window'
 ]

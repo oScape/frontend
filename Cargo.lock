@@ -154,8 +154,6 @@ dependencies = [
  "js-sys",
  "lite-lib",
  "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
 ]
 
 [[package]]
