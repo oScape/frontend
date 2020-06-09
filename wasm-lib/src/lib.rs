@@ -1,5 +1,9 @@
 use js_sys::Function;
-use lite_lib::{button::Button, storage::Storage, text::Text};
+use lite_lib::{
+    button::Button,
+    storage::{Item, Storage},
+    text::Text,
+};
 use std::{
     collections::BTreeMap,
     sync::{Arc, Mutex},
@@ -34,11 +38,14 @@ pub fn run() -> Result<(), JsValue> {
 fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from("uid"), String::from("an_awsome_uid"));
-        btreemap.insert(String::from("text"), String::from("self.text.as_str()"));
-        btreemap.insert(String::from("element_type"), String::from("text"));
+        let new_item = Item {
+            element_type: String::from("text"),
+            text: String::from("self.text.as_str()"),
+            on_click: None,
+        };
+        btreemap.insert(String::from("an_awsome_uid"), new_item);
 
-        storage.lock().unwrap().update_element(btreemap);
+        storage.lock().unwrap().update_state(btreemap);
     }) as Box<dyn FnMut()>);
 
     let res = cb.as_ref().to_owned().unchecked_into();

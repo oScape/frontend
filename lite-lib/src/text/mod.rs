@@ -1,9 +1,9 @@
 use crate::utils::dom::document;
 use crate::{
-    storage::Storage,
+    storage::Item,
     utils::query_selector::{query_selector, SelectorType},
 };
-use std::{collections::BTreeMap, sync::MutexGuard};
+use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
 
@@ -33,18 +33,21 @@ impl Text {
         &self
     }
 
-    pub fn update_element(btreemap: BTreeMap<String, String>) {
-        let old_element = query_selector(SelectorType::Id, btreemap.get("uid").unwrap().as_str())
+    pub fn update_element(uid: String, item: Item) {
+        let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlDivElement>()
             .unwrap();
-        old_element.set_inner_text(btreemap.get("text").unwrap().as_str());
+        old_element.set_inner_text(item.text.as_str());
     }
 
-    pub fn build_tree_map(&self) -> BTreeMap<String, String> {
+    pub fn build_tree_map(&self) -> BTreeMap<String, Item> {
         let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from("uid"), String::from(&*self.uid));
-        btreemap.insert(String::from("element_type"), String::from("text"));
-        btreemap.insert(String::from("text"), String::from(&*self.text));
+        let new_item = Item {
+            element_type: String::from("text"),
+            text: String::from(&*self.text),
+            on_click: None,
+        };
+        btreemap.insert(String::from(&*self.uid), new_item);
 
         btreemap
     }
