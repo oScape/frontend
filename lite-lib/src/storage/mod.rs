@@ -3,7 +3,7 @@ use js_sys::Function;
 use std::collections::BTreeMap;
 
 #[derive(Clone)]
-pub struct Item {
+pub struct ItemDTO {
     pub element_type: String,
     pub text: String,
     pub on_click: Option<Function>,
@@ -11,7 +11,7 @@ pub struct Item {
 
 #[derive(Default)]
 pub struct Storage {
-    state: Vec<BTreeMap<String, Item>>,
+    state: Vec<BTreeMap<String, ItemDTO>>,
 }
 
 impl Storage {
@@ -19,11 +19,11 @@ impl Storage {
         Storage::default()
     }
 
-    pub fn add_btreemap(&mut self, btreemap: BTreeMap<String, Item>) {
+    pub fn add_btreemap(&mut self, btreemap: BTreeMap<String, ItemDTO>) {
         self.state.push(btreemap);
     }
 
-    pub fn get_element(&self, uid: String) -> Option<BTreeMap<String, Item>> {
+    pub fn get_element(&self, uid: String) -> Option<BTreeMap<String, ItemDTO>> {
         let mut result = None;
         for btreemap in self.state.iter() {
             if let Some(_) = btreemap.get(uid.as_str()) {
@@ -34,13 +34,16 @@ impl Storage {
         result
     }
 
-    pub fn update_state(&mut self, new_btreemap: BTreeMap<String, Item>) {
-        for (new_uid, new_item) in new_btreemap.iter() {
+    pub fn update_state(&mut self, mut new_btreemap: BTreeMap<String, ItemDTO>) {
+        for (new_uid, new_item) in new_btreemap.clone().iter_mut() {
             for old_btreemap in self.state.iter_mut() {
                 for (old_uid, old_item) in old_btreemap.clone().iter() {
                     if old_uid == new_uid {
+                        if new_item.element_type == "button" {
+                            new_item.on_click = old_item.on_click.clone();
+                        }
                         old_btreemap.clear();
-                        old_btreemap.append(&mut new_btreemap.clone());
+                        old_btreemap.append(&mut new_btreemap);
                     }
                 }
             }

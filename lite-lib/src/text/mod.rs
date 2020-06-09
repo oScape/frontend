@@ -1,6 +1,6 @@
 use crate::utils::dom::document;
 use crate::{
-    storage::Item,
+    storage::ItemDTO,
     utils::query_selector::{query_selector, SelectorType},
 };
 use std::collections::BTreeMap;
@@ -33,16 +33,16 @@ impl Text {
         &self
     }
 
-    pub fn update_element(uid: String, item: Item) {
+    pub fn update_element(uid: String, item: ItemDTO) {
         let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlDivElement>()
             .unwrap();
         old_element.set_inner_text(item.text.as_str());
     }
 
-    pub fn build_tree_map(&self) -> BTreeMap<String, Item> {
+    pub fn build_tree_map(&self) -> BTreeMap<String, ItemDTO> {
         let mut btreemap = BTreeMap::new();
-        let new_item = Item {
+        let new_item = ItemDTO {
             element_type: String::from("text"),
             text: String::from(&*self.text),
             on_click: None,

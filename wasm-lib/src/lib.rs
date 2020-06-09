@@ -1,7 +1,7 @@
 use js_sys::Function;
 use lite_lib::{
     button::Button,
-    storage::{Item, Storage},
+    storage::{ItemDTO, Storage},
     text::Text,
 };
 use std::{
@@ -38,8 +38,8 @@ pub fn run() -> Result<(), JsValue> {
 fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
-        let new_item = Item {
-            element_type: String::from("text"),
+        let new_item = ItemDTO {
+            element_type: String::from("button"),
             text: String::from("self.text.as_str()"),
             on_click: None,
         };
