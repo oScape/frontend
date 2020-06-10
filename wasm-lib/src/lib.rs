@@ -10,13 +10,6 @@ use std::{
 };
 use wasm_bindgen::{prelude::*, JsCast};
 
-#[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
@@ -34,9 +27,14 @@ pub fn run() -> Result<(), JsValue> {
         text: String::from("new_item"),
     };
 
+    let new_item_2 = ItemDTO {
+        element_type: String::from("text"),
+        text: String::from("new_item_2"),
+    };
+
     let button_element = Button::new(
         String::from("button"),
-        on_click_action(storage.clone(), new_item),
+        on_click_action(storage.clone(), new_item, new_item_2),
     );
     button_element.render_element();
 
@@ -48,10 +46,11 @@ pub fn run() -> Result<(), JsValue> {
     Ok(())
 }
 
-fn on_click_action(storage: Arc<Mutex<Storage>>, new_item: ItemDTO) -> Function {
+fn on_click_action(storage: Arc<Mutex<Storage>>, new_item: ItemDTO, new_item_2: ItemDTO ) -> Function {
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from("an_uid"), new_item.clone());
+        btreemap.insert(String::from("an_awsome_uid"), new_item_2.clone());
 
         storage.lock().unwrap().update_state(btreemap);
     }) as Box<dyn FnMut()>);

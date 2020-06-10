@@ -9,7 +9,7 @@ pub struct ItemDTO {
 
 #[derive(Default)]
 pub struct Storage {
-    state: Vec<BTreeMap<String, ItemDTO>>,
+    global_state: Vec<BTreeMap<String, ItemDTO>>,
 }
 
 impl Storage {
@@ -18,12 +18,12 @@ impl Storage {
     }
 
     pub fn add_btreemap(&mut self, btreemap: BTreeMap<String, ItemDTO>) {
-        self.state.push(btreemap);
+        self.global_state.push(btreemap);
     }
 
     pub fn get_element(&self, uid: String) -> Option<BTreeMap<String, ItemDTO>> {
         let mut result = None;
-        for btreemap in self.state.iter() {
+        for btreemap in self.global_state.iter() {
             if let Some(_) = btreemap.get(uid.as_str()) {
                 result = Some(btreemap.clone())
             }
@@ -32,28 +32,26 @@ impl Storage {
         result
     }
 
-    pub fn update_state(&mut self, mut new_btreemap: BTreeMap<String, ItemDTO>) {
-        for (new_uid, _) in new_btreemap.clone().iter() {
-            for old_btreemap in self.state.iter_mut() {
-                for (old_uid, _) in old_btreemap.clone().iter() {
+    pub fn update_state(&mut self, mut state_to_merge: BTreeMap<String, ItemDTO>) {
+        for (new_uid, _) in state_to_merge.clone().iter() {
+            for atomic_state in self.global_state.iter_mut() {
+                for (old_uid, _) in atomic_state.clone().iter() {
                     if old_uid == new_uid {
-                        old_btreemap.clear();
-                        old_btreemap.append(&mut new_btreemap);
+                        atomic_state.clear();
+                        atomic_state.append(&mut state_to_merge);
+                        Storage::dispatch(&atomic_state);
                     }
                 }
             }
         }
-        self.dispatch();
     }
 
-    fn dispatch(&self) {
-        for btreemap in self.state.iter() {
-            for (uid, item) in btreemap.iter() {
-                match item.element_type.as_str() {
-                    "text" => Text::update_element(uid.clone(), item.clone()),
-                    "button" => Button::update_element(uid.clone(), item.clone()),
-                    _ => (),
-                }
+    fn dispatch(atomic_state: &BTreeMap<String, ItemDTO>) {
+        for (uid, item) in atomic_state.iter() {
+            match item.element_type.as_str() {
+                "text" => Text::update_element(uid.clone(), item.clone()),
+                "button" => Button::update_element(uid.clone(), item.clone()),
+                _ => (),
             }
         }
     }
