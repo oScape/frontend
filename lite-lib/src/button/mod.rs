@@ -44,9 +44,6 @@ impl Button {
         let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
-        if let Some(callback) = item.on_click {
-            old_element.set_onclick(Some(&callback));
-        }
         old_element.set_inner_text(item.text.as_str());
     }
 
@@ -55,7 +52,6 @@ impl Button {
         let new_item = ItemDTO {
             element_type: String::from("text"),
             text: String::from(&*self.text),
-            on_click: Some(self.on_click.clone()),
         };
         btreemap.insert(String::from(&*self.uid), new_item);
 

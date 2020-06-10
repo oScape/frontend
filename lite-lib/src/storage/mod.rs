@@ -1,12 +1,10 @@
 use crate::{button::Button, text::Text};
-use js_sys::Function;
 use std::collections::BTreeMap;
 
 #[derive(Clone)]
 pub struct ItemDTO {
     pub element_type: String,
     pub text: String,
-    pub on_click: Option<Function>,
 }
 
 #[derive(Default)]

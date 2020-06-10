@@ -29,16 +29,9 @@ pub fn run() -> Result<(), JsValue> {
         .unwrap()
         .add_btreemap(text_element.build_tree_map());
 
-    let new_item_2 = ItemDTO {
-        element_type: String::from("button"),
-        text: String::from("new_item_2"),
-        on_click: None,
-    };
-
     let new_item = ItemDTO {
         element_type: String::from("button"),
         text: String::from("new_item"),
-        on_click: Some(on_click_action_2(storage.clone(), new_item_2)),
     };
 
     let button_element = Button::new(
@@ -56,19 +49,6 @@ pub fn run() -> Result<(), JsValue> {
 }
 
 fn on_click_action(storage: Arc<Mutex<Storage>>, new_item: ItemDTO) -> Function {
-    let cb = Closure::wrap(Box::new(move || {
-        let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from("an_uid"), new_item.clone());
-
-        storage.lock().unwrap().update_state(btreemap);
-    }) as Box<dyn FnMut()>);
-
-    let res = cb.as_ref().to_owned().unchecked_into();
-    Closure::forget(cb);
-    res
-}
-
-fn on_click_action_2(storage: Arc<Mutex<Storage>>, new_item: ItemDTO) -> Function {
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from("an_uid"), new_item.clone());

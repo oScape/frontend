@@ -45,7 +45,6 @@ impl Text {
         let new_item = ItemDTO {
             element_type: String::from("text"),
             text: String::from(&*self.text),
-            on_click: None,
         };
         btreemap.insert(String::from(&*self.uid), new_item);
 
