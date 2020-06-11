@@ -10,7 +10,6 @@ use std::{
 };
 use wasm_bindgen::{prelude::*, JsCast};
 
-
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
     let text_element = Text::new(String::from("text"));
@@ -20,7 +19,7 @@ pub fn run() -> Result<(), JsValue> {
     storage
         .lock()
         .unwrap()
-        .add_btreemap(text_element.build_tree_map());
+        .add_btreemap(&mut text_element.build_tree_map());
 
     let new_item = ItemDTO {
         element_type: String::from("button"),
@@ -41,12 +40,16 @@ pub fn run() -> Result<(), JsValue> {
     storage
         .lock()
         .unwrap()
-        .add_btreemap(button_element.build_tree_map());
+        .add_btreemap(&mut button_element.build_tree_map());
 
     Ok(())
 }
 
-fn on_click_action(storage: Arc<Mutex<Storage>>, new_item: ItemDTO, new_item_2: ItemDTO ) -> Function {
+fn on_click_action(
+    storage: Arc<Mutex<Storage>>,
+    new_item: ItemDTO,
+    new_item_2: ItemDTO,
+) -> Function {
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from("an_uid"), new_item.clone());

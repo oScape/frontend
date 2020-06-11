@@ -9,7 +9,7 @@ pub struct ItemDTO {
 
 #[derive(Default)]
 pub struct Storage {
-    global_state: Vec<BTreeMap<String, ItemDTO>>,
+    global_state: BTreeMap<String, ItemDTO>,
 }
 
 impl Storage {
@@ -17,36 +17,22 @@ impl Storage {
         Storage::default()
     }
 
-    pub fn add_btreemap(&mut self, btreemap: BTreeMap<String, ItemDTO>) {
-        self.global_state.push(btreemap);
+    pub fn add_btreemap(&mut self, btreemap: &mut BTreeMap<String, ItemDTO>) {
+        self.global_state.append(btreemap);
     }
 
-    pub fn get_element(&self, uid: String) -> Option<BTreeMap<String, ItemDTO>> {
-        let mut result = None;
-        for btreemap in self.global_state.iter() {
-            if let Some(_) = btreemap.get(uid.as_str()) {
-                result = Some(btreemap.clone())
-            }
-        }
-
-        result
-    }
-
-    pub fn update_state(&mut self, mut state_to_merge: BTreeMap<String, ItemDTO>) {
-        for (new_uid, _) in state_to_merge.clone().iter() {
-            for atomic_state in self.global_state.iter_mut() {
-                for (old_uid, _) in atomic_state.clone().iter() {
-                    if old_uid == new_uid {
-                        atomic_state.clear();
-                        atomic_state.append(&mut state_to_merge);
-                        Storage::dispatch(&atomic_state);
-                    }
+    pub fn update_state(&mut self, state_to_merge: BTreeMap<String, ItemDTO>) {
+        for (new_uid, new_state) in &state_to_merge {
+            for (old_uid, old_state) in &mut self.global_state {
+                if old_uid == new_uid {
+                    *old_state = new_state.clone();
                 }
             }
         }
+        Storage::dispatch(self.global_state.clone());
     }
 
-    fn dispatch(atomic_state: &BTreeMap<String, ItemDTO>) {
+    fn dispatch(atomic_state: BTreeMap<String, ItemDTO>) {
         for (uid, item) in atomic_state.iter() {
             match item.element_type.as_str() {
                 "text" => Text::update_element(uid.clone(), item.clone()),
