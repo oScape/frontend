@@ -1,4 +1,4 @@
-use crate::utils::log::log;
+use crate::utils::logger::logger;
 use crate::{button::Button, text::Text};
 use std::collections::BTreeMap;
 
@@ -31,7 +31,7 @@ impl Storage {
             }
         }
         Storage::dispatch(self.global_state.clone());
-        Storage::logger(state_to_merge);
+        logger(state_to_merge);
     }
 
     fn dispatch(atomic_state: BTreeMap<String, ItemDTO>) {
@@ -41,15 +41,6 @@ impl Storage {
                 "button" => Button::update_element(uid.clone(), item.clone()),
                 _ => (),
             }
-        }
-    }
-
-    fn logger(state_to_merge: BTreeMap<String, ItemDTO>) {
-        for (uid, item) in state_to_merge {
-            log(format!("UID: {}", uid).as_str());
-            log("| Item:");
-            log(format!("  | Type: {}", item.element_type).as_str());
-            log(format!("  | Text: {}", item.text).as_str());
         }
     }
 }
