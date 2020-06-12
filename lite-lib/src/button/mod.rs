@@ -1,6 +1,5 @@
 use crate::utils::dom::document;
 use crate::{
-    storage::ItemDTO,
     utils::query_selector::{query_selector, SelectorType},
 };
 use js_sys::Function;
@@ -11,14 +10,13 @@ use web_sys::{HtmlButtonElement, HtmlElement};
 pub struct Button {
     uid: String,
     text: String,
-    on_click: Function,
 }
 
 impl Button {
     pub fn new(uid: String, text: String, on_click: Function) -> Button {
         Button {
             text,
-            on_click,
+            // on_click,
             uid,
         }
     }
@@ -30,7 +28,7 @@ impl Button {
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
         element.set_id(self.uid.as_str());
-        element.set_onclick(Some(&self.on_click));
+        // element.set_onclick(Some(&self.on_click));
         element.set_inner_text(self.text.as_str());
 
         let element = element.dyn_into::<HtmlElement>().unwrap();
@@ -39,17 +37,17 @@ impl Button {
         &self
     }
 
-    pub fn update_element(uid: String, item: ItemDTO) {
+    pub fn update_element(uid: String, item: Button) {
         let old_element = query_selector(SelectorType::Id, uid.as_str())
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
         old_element.set_inner_text(item.text.as_str());
     }
 
-    pub fn build_tree_map(&self) -> BTreeMap<String, ItemDTO> {
+    pub fn build_tree_map(&self) -> BTreeMap<String, Button> {
         let mut btreemap = BTreeMap::new();
-        let new_item = ItemDTO {
-            element_type: String::from("button"),
+        let new_item = Button {
+            uid: String::from(&*self.uid),
             text: String::from(&*self.text),
         };
         btreemap.insert(String::from(&*self.uid), new_item);

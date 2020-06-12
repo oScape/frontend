@@ -1,12 +1,13 @@
 use crate::utils::dom::document;
 use crate::{
-    storage::ItemDTO,
     utils::query_selector::{query_selector, SelectorType},
 };
 use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Text {
     uid: String,
     text: String,
@@ -32,20 +33,16 @@ impl Text {
         &self
     }
 
-    pub fn update_element(uid: String, item: ItemDTO) {
-        let old_element = query_selector(SelectorType::Id, uid.as_str())
+    pub fn update_element(item: Text) {
+        let old_element = query_selector(SelectorType::Id, item.uid.as_str())
             .dyn_into::<HtmlDivElement>()
             .unwrap();
         old_element.set_inner_text(item.text.as_str());
     }
 
-    pub fn build_tree_map(&self) -> BTreeMap<String, ItemDTO> {
+    pub fn build_tree_map(&self) -> BTreeMap<String, String> {
         let mut btreemap = BTreeMap::new();
-        let new_item = ItemDTO {
-            element_type: String::from("text"),
-            text: String::from(&*self.text),
-        };
-        btreemap.insert(String::from(&*self.uid), new_item);
+        btreemap.insert(String::from(&*self.uid), serde_json::to_string(&self).unwrap());
 
         btreemap
     }
