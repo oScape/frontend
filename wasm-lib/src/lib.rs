@@ -20,7 +20,7 @@ pub fn run() -> Result<(), JsValue> {
         .unwrap()
         .add_btreemap(&mut text_element.build_tree_map());
 
-    let text_element_2 = Text::new(String::from("text_uid_2"),String::from("text_2"));
+    let text_element_2 = Text::new(String::from("text_uid_2"), String::from("text_2"));
     text_element_2.render_element();
     storage
         .lock()

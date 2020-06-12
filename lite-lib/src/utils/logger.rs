@@ -1,6 +1,6 @@
-use web_sys::console;
-use std::collections::BTreeMap;
 use crate::storage::ItemDTO;
+use std::collections::BTreeMap;
+use web_sys::console;
 
 pub fn logger(old_state: BTreeMap<String, ItemDTO>, new_state: BTreeMap<String, ItemDTO>) {
     console::group_1(&format!("action").into());
