@@ -23,6 +23,7 @@ impl Storage {
     }
 
     pub fn update_state(&mut self, state_to_merge: BTreeMap<String, ItemDTO>) {
+        let old_state = self.global_state.clone();
         for (new_uid, new_state) in &state_to_merge {
             for (old_uid, old_state) in &mut self.global_state {
                 if old_uid == new_uid {
@@ -31,7 +32,7 @@ impl Storage {
             }
         }
         Storage::dispatch(self.global_state.clone());
-        logger(state_to_merge);
+        logger(old_state, self.global_state.clone());
     }
 
     fn dispatch(atomic_state: BTreeMap<String, ItemDTO>) {

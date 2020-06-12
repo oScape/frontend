@@ -15,8 +15,7 @@ pub struct Button {
 }
 
 impl Button {
-    pub fn new(text: String, on_click: Function) -> Button {
-        let uid = String::from("an_uid");
+    pub fn new(uid: String, text: String, on_click: Function) -> Button {
         Button {
             text,
             on_click,
@@ -50,7 +49,7 @@ impl Button {
     pub fn build_tree_map(&self) -> BTreeMap<String, ItemDTO> {
         let mut btreemap = BTreeMap::new();
         let new_item = ItemDTO {
-            element_type: String::from("text"),
+            element_type: String::from("button"),
             text: String::from(&*self.text),
         };
         btreemap.insert(String::from(&*self.uid), new_item);

@@ -13,8 +13,7 @@ pub struct Text {
 }
 
 impl Text {
-    pub fn new(text: String) -> Text {
-        let uid = String::from("an_awsome_uid");
+    pub fn new(uid: String, text: String) -> Text {
         Text { text, uid }
     }
 
