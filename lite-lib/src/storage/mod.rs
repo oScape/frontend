@@ -32,8 +32,8 @@ impl Storage {
         // logger(&self.global_state);
     }
 
-    fn dispatch(atomic_state: &BTreeMap<String, String>) {
-        for (_, item) in atomic_state {
+    fn dispatch(global_state: &BTreeMap<String, String>) {
+        for (_, item) in global_state {
             let button: Button = serde_json::from_str(item).unwrap();
             if button.get_type_element().as_str() == "button" {
                 Button::update_element(button);
