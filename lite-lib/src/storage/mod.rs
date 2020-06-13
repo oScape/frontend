@@ -1,22 +1,29 @@
-use serde::{Serialize, Deserialize};
 use crate::utils::logger::logger;
-use crate::{button::Button, text::Text};
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, sync::mpsc::Sender};
 
-#[derive(Default)]
 pub struct Storage {
+    global_sender: BTreeMap<String, Sender<String>>,
     global_state: BTreeMap<String, String>,
 }
 
 impl Storage {
-    pub fn new(first_state: BTreeMap<String, String>) -> Storage {
+    pub fn new(
+        first_sender: BTreeMap<String, Sender<String>>,
+        first_state: BTreeMap<String, String>,
+    ) -> Storage {
         Storage {
-            global_state: first_state
+            global_sender: first_sender,
+            global_state: first_state,
         }
     }
 
-    pub fn add_btreemap(&mut self, btreemap: &mut BTreeMap<String, String>) {
-        self.global_state.append(btreemap);
+    pub fn add_btreemap(
+        &mut self,
+        sender: &mut BTreeMap<String, Sender<String>>,
+        string: &mut BTreeMap<String, String>,
+    ) {
+        self.global_sender.append(sender);
+        self.global_state.append(string);
     }
 
     pub fn update_state(&mut self, state_to_merge: BTreeMap<String, String>) {
@@ -24,23 +31,20 @@ impl Storage {
             for (old_uid, old_state) in &mut self.global_state {
                 if old_uid == &new_uid {
                     *old_state = new_state;
-                    break
+                    break;
                 }
             }
         }
-        Storage::dispatch(&self.global_state);
-        // logger(&self.global_state);
+        self.dispatch();
+        logger(&self.global_state);
     }
 
-    fn dispatch(global_state: &BTreeMap<String, String>) {
-        for (_, item) in global_state {
-            let button: Button = serde_json::from_str(item).unwrap();
-            if button.get_type_element().as_str() == "button" {
-                Button::update_element(button);
-            }
-            let text: Text = serde_json::from_str(item).unwrap();
-            if text.get_type_element().as_str() == "text" {
-                Text::update_element(text);
+    fn dispatch(&mut self) {
+        for (state_uid, state_item) in &mut self.global_state {
+            for (sender_uid, sender) in &mut self.global_sender {
+                if state_uid == sender_uid {
+                    sender.send(state_item.clone()).unwrap();
+                }
             }
         }
     }
