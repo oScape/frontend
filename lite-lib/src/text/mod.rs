@@ -9,13 +9,15 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Text {
+    type_element: String,
     uid: String,
     text: String,
 }
 
 impl Text {
     pub fn new(uid: String, text: String) -> Text {
-        Text { text, uid }
+        let type_element = String::from("text");
+        Text { type_element, text, uid }
     }
 
     pub fn render_element(&self) -> &Text {
@@ -31,6 +33,10 @@ impl Text {
         document().body().unwrap().append_child(&element).unwrap();
 
         &self
+    }
+
+    pub fn get_type_element(&self) -> &String {
+        &self.type_element
     }
 
     pub fn update_element(item: Text) {

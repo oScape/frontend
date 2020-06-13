@@ -33,9 +33,15 @@ impl Storage {
     }
 
     fn dispatch(atomic_state: &BTreeMap<String, String>) {
-        for (uid, item) in atomic_state {
+        for (_, item) in atomic_state {
+            let button: Button = serde_json::from_str(item).unwrap();
+            if button.get_type_element().as_str() == "button" {
+                Button::update_element(button);
+            }
             let text: Text = serde_json::from_str(item).unwrap();
-            Text::update_element(text);
+            if text.get_type_element().as_str() == "text" {
+                Text::update_element(text);
+            }
         }
     }
 }

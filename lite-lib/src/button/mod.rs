@@ -6,17 +6,21 @@ use js_sys::Function;
 use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlButtonElement, HtmlElement};
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Button {
+    type_element: String,
     uid: String,
     text: String,
 }
 
 impl Button {
-    pub fn new(uid: String, text: String, on_click: Function) -> Button {
+    pub fn new(uid: String, text: String) -> Button {
+        let type_element = String::from("button");
         Button {
+            type_element,
             text,
-            // on_click,
             uid,
         }
     }
@@ -28,7 +32,6 @@ impl Button {
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
         element.set_id(self.uid.as_str());
-        // element.set_onclick(Some(&self.on_click));
         element.set_inner_text(self.text.as_str());
 
         let element = element.dyn_into::<HtmlElement>().unwrap();
@@ -37,20 +40,27 @@ impl Button {
         &self
     }
 
-    pub fn update_element(uid: String, item: Button) {
-        let old_element = query_selector(SelectorType::Id, uid.as_str())
+    pub fn get_type_element(&self) -> &String {
+        &self.type_element
+    }
+
+    pub fn add_on_click(&self, on_click: Function) {
+        let element = query_selector(SelectorType::Id, &self.uid.as_str())
+            .dyn_into::<HtmlButtonElement>()
+            .unwrap();
+        element.set_onclick(Some(&on_click));
+    }
+
+    pub fn update_element(item: Button) {
+        let old_element = query_selector(SelectorType::Id, item.uid.as_str())
             .dyn_into::<HtmlButtonElement>()
             .unwrap();
         old_element.set_inner_text(item.text.as_str());
     }
 
-    pub fn build_tree_map(&self) -> BTreeMap<String, Button> {
+    pub fn build_tree_map(&self) -> BTreeMap<String, String> {
         let mut btreemap = BTreeMap::new();
-        let new_item = Button {
-            uid: String::from(&*self.uid),
-            text: String::from(&*self.text),
-        };
-        btreemap.insert(String::from(&*self.uid), new_item);
+        btreemap.insert(String::from(&*self.uid), serde_json::to_string(&self).unwrap());
 
         btreemap
     }
