@@ -63,8 +63,8 @@ impl Text {
 
     pub fn build_tree_sender(&self) -> BTreeMap<String, Sender<String>> {
         let (sender, receiver) = channel();
-        let received_button: String = receiver.recv().unwrap();
-        Text::update_element(serde_json::from_str(received_button.as_str()).unwrap());
+        // let received_button: String = receiver.recv().unwrap();
+        // Text::update_element(serde_json::from_str(received_button.as_str()).unwrap());
 
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from(&*self.uid), sender);

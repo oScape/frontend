@@ -15,40 +15,32 @@ pub fn run() -> Result<(), JsValue> {
         text_element.build_tree_map(),
     )));
 
-    // let text_element_2 = Text::new(String::from("text_uid_2"), String::from("text_2"));
-    // text_element_2.render_element();
-    // storage
-    //     .lock()
-    //     .unwrap()
-    //     .add_btreemap(&mut text_element_2.build_tree_sender(), &mut text_element_2.build_tree_map());
+    let text_element_2 = Text::new(String::from("text_uid_2"), String::from("text_2"));
+    text_element_2.render_element();
+    storage
+        .lock()
+        .unwrap()
+        .add_btreemap(&mut text_element_2.build_tree_sender(), &mut text_element_2.build_tree_map());
 
-    // let text_element_3 = Text::new(String::from("text_uid_3"), String::from("text_3"));
-    // text_element_3.render_element();
-    // storage
-    //     .lock()
-    //     .unwrap()
-    //     .add_btreemap(&mut text_element_3.build_tree_sender(), &mut text_element_3.build_tree_map());
+    let text_element_3 = Text::new(String::from("text_uid_3"), String::from("text_3"));
+    text_element_3.render_element();
+    storage
+        .lock()
+        .unwrap()
+        .add_btreemap(&mut text_element_3.build_tree_sender(), &mut text_element_3.build_tree_map());
 
-    // let button_element = Button::new(
-    //     String::from("button_uid"),
-    //     String::from("button"),
-    // );
-    // button_element.render_element();
-    // button_element.add_on_click(
-    //     on_click_action(storage.clone()));
-    // storage
-    //     .lock()
-    //     .unwrap()
-    //     .add_btreemap(&mut button_element.build_tree_sender(), &mut button_element.build_tree_map());
+    let button_element = Button::new(
+        String::from("button_uid"),
+        String::from("button"),
+    );
+    button_element.render_element();
+    button_element.add_on_click(
+        on_click_action(storage.clone()));
+    storage
+        .lock()
+        .unwrap()
+        .add_btreemap(&mut button_element.build_tree_sender(), &mut button_element.build_tree_map());
 
-    // let new_text = Text::new(
-    //     String::from("text_uid_1"),
-    //     String::from("new_text"),
-    // );
-
-    // let mut btreemap = BTreeMap::new();
-    // btreemap.insert(String::from("text_uid_1"), serde_json::to_string(&new_text).unwrap());
-    // storage.lock().unwrap().update_state(btreemap);
     Ok(())
 }
 
