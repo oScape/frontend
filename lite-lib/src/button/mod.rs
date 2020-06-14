@@ -1,5 +1,8 @@
 use crate::utils::dom::document;
-use crate::utils::query_selector::{query_selector, SelectorType};
+use crate::{
+    storage::Tupplewear,
+    utils::query_selector::{query_selector, SelectorType},
+};
 use js_sys::Function;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -64,5 +67,9 @@ impl Button {
         );
 
         btreemap
+    }
+
+    pub fn build_tupplewear(&self) -> Tupplewear {
+        (String::from(&*self.uid), String::from("button"))
     }
 }

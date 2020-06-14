@@ -8,31 +8,35 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 #[wasm_bindgen(start)]
 pub fn run() -> Result<(), JsValue> {
+    let storage = Arc::new(Mutex::new(Storage::new()));
     let text_element = Text::new(String::from("text_uid_1"), String::from("text_1"));
     text_element.render_element();
-    let storage = Arc::new(Mutex::new(Storage::new(text_element.build_tree_map())));
+    storage.lock().unwrap().add_mappers(
+        &mut text_element.build_tree_map(),
+        text_element.build_tupplewear(),
+    );
 
     let text_element_2 = Text::new(String::from("text_uid_2"), String::from("text_2"));
     text_element_2.render_element();
-    storage
-        .lock()
-        .unwrap()
-        .add_btreemap(&mut text_element_2.build_tree_map());
+    storage.lock().unwrap().add_mappers(
+        &mut text_element_2.build_tree_map(),
+        text_element_2.build_tupplewear(),
+    );
 
     let text_element_3 = Text::new(String::from("text_uid_3"), String::from("text_3"));
     text_element_3.render_element();
-    storage
-        .lock()
-        .unwrap()
-        .add_btreemap(&mut text_element_3.build_tree_map());
+    storage.lock().unwrap().add_mappers(
+        &mut text_element_3.build_tree_map(),
+        text_element_3.build_tupplewear(),
+    );
 
     let button_element = Button::new(String::from("button_uid"), String::from("button"));
     button_element.render_element();
     button_element.add_on_click(on_click_action(storage.clone()));
-    storage
-        .lock()
-        .unwrap()
-        .add_btreemap(&mut button_element.build_tree_map());
+    storage.lock().unwrap().add_mappers(
+        &mut button_element.build_tree_map(),
+        button_element.build_tupplewear(),
+    );
 
     Ok(())
 }

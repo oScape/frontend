@@ -1,5 +1,8 @@
 use crate::utils::dom::document;
-use crate::utils::query_selector::{query_selector, SelectorType};
+use crate::{
+    storage::Tupplewear,
+    utils::query_selector::{query_selector, SelectorType},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
@@ -56,5 +59,9 @@ impl Text {
         );
 
         btreemap
+    }
+
+    pub fn build_tupplewear(&self) -> Tupplewear {
+        (String::from(&*self.uid), String::from("text"))
     }
 }

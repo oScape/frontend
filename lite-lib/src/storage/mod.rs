@@ -1,21 +1,22 @@
 use crate::utils::logger::logger;
 use crate::{button::Button, text::Text};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
+pub type Tupplewear = (String, String);
 #[derive(Default)]
 pub struct Storage {
     global_state: BTreeMap<String, String>,
+    global_convert: HashMap<String, String>,
 }
 
 impl Storage {
-    pub fn new(first_state: BTreeMap<String, String>) -> Storage {
-        Storage {
-            global_state: first_state,
-        }
+    pub fn new() -> Storage {
+        Storage::default()
     }
 
-    pub fn add_btreemap(&mut self, btreemap: &mut BTreeMap<String, String>) {
+    pub fn add_mappers(&mut self, btreemap: &mut BTreeMap<String, String>, tupplewear: Tupplewear) {
         self.global_state.append(btreemap);
+        self.global_convert.insert(tupplewear.0, tupplewear.1);
     }
 
     pub fn update_state(&mut self, state_to_merge: BTreeMap<String, String>) {
@@ -28,18 +29,18 @@ impl Storage {
                 }
             }
         }
-        Storage::dispatch(&self.global_state);
+        self.dispatch();
         logger(String::from("next state"), &self.global_state);
     }
 
-    fn dispatch(global_state: &BTreeMap<String, String>) {
-        for (_, item) in global_state {
-            let button: Button = serde_json::from_str(item).unwrap();
-            if button.get_type_element().as_str() == "button" {
+    fn dispatch(&self) {
+        for (uid, item) in &self.global_state {
+            let convertor = self.global_convert.get(uid).unwrap();
+            if convertor == "button" {
+                let button: Button = serde_json::from_str(&item).unwrap();
                 Button::update_element(button);
-            }
-            let text: Text = serde_json::from_str(item).unwrap();
-            if text.get_type_element().as_str() == "text" {
+            } else if convertor == "text" {
+                let text: Text = serde_json::from_str(&item).unwrap();
                 Text::update_element(text);
             }
         }
