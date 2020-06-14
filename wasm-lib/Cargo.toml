@@ -12,6 +12,13 @@ lite-lib = { path = "../lite-lib" }
 wasm-bindgen = "0.2.62"
 js-sys = "0.3.37"
 serde_json = "1.0.55"
+wasm-bindgen-futures = "0.4.11"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+    'console'
+]
 
 [profile.release]
 opt-level = "s"

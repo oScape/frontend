@@ -4,10 +4,11 @@ use js_sys::Function;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
-    sync::mpsc::{channel, Sender},
+    sync::mpsc::{channel, Sender, Receiver},
 };
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{HtmlButtonElement, HtmlElement};
+use wasm_bindgen_futures::spawn_local;
 
 #[derive(Serialize, Deserialize)]
 pub struct Button {
@@ -71,15 +72,18 @@ impl Button {
 
     pub fn build_tree_sender(&self) -> BTreeMap<String, Sender<String>> {
         let (sender, receiver) = channel();
-        let closure = Closure::wrap(Box::new(move || {
-            let received_data: String = receiver.recv().unwrap();
-            Button::update_element(serde_json::from_str(received_data.as_str()).unwrap());
-        }) as Box<dyn FnMut()>);
-        Closure::forget(closure);
+        spawn_local(Button::spawner(receiver));
 
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from(&*self.uid), sender);
 
         btreemap
+    }
+
+    pub async fn spawner(receiver: Receiver<String>) {
+        move || while let Ok(received_data) = receiver.recv() {
+            let received_data: String = received_data;
+            Button::update_element(serde_json::from_str(received_data.as_str()).unwrap());
+        };
     }
 }

@@ -3,10 +3,11 @@ use crate::utils::query_selector::{query_selector, SelectorType};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
-    sync::mpsc::{channel, Sender},
+    sync::mpsc::{channel, Sender, Receiver},
 };
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{HtmlDivElement, HtmlElement};
+use web_sys::{console, HtmlDivElement, HtmlElement};
+use wasm_bindgen_futures::spawn_local;
 
 #[derive(Serialize, Deserialize)]
 pub struct Text {
@@ -63,15 +64,30 @@ impl Text {
 
     pub fn build_tree_sender(&self) -> BTreeMap<String, Sender<String>> {
         let (sender, receiver) = channel();
-        let closure = Closure::wrap(Box::new(move || {
-            let received_data: String = receiver.recv().unwrap();
-            Text::update_element(serde_json::from_str(received_data.as_str()).unwrap());
-        }) as Box<dyn FnMut()>);
-        Closure::forget(closure);
+        spawn_local(Text::spawner(receiver));
+
+        // move || while let Ok(new_text) = receiver.recv() {
+        //     my_paragraph.set_text(new_text);
+        // }
+        // let closure = Closure::wrap(Box::new(move || while let Ok(received_data) = receiver.recv() {
+        //     let received_data: String = received_data;
+        //     Text::update_element(serde_json::from_str(received_data.as_str()).unwrap());
+        // }) as Box<dyn FnMut()>);
+        // let closure = Closure::wrap(Box::new(move || while let Ok(received_data) {
+        //     Text::update_element(serde_json::from_str(received_data.as_str()).unwrap());
+        // }) as Box<dyn FnMut()>);
+        // Closure::forget(closure);
 
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from(&*self.uid), sender);
 
         btreemap
+    }
+
+    pub async fn spawner(receiver: Receiver<String>) {
+        move || while let Ok(received_data) = receiver.recv() {
+            let received_data: String = received_data;
+            Text::update_element(serde_json::from_str(received_data.as_str()).unwrap());
+        };
     }
 }
