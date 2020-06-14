@@ -6,7 +6,7 @@ use std::{
     collections::BTreeMap,
     sync::mpsc::{channel, Sender},
 };
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{HtmlButtonElement, HtmlElement};
 
 #[derive(Serialize, Deserialize)]
@@ -71,8 +71,11 @@ impl Button {
 
     pub fn build_tree_sender(&self) -> BTreeMap<String, Sender<String>> {
         let (sender, receiver) = channel();
-        // let received_button: String = receiver.recv().unwrap();
-        // Button::update_element(serde_json::from_str(received_button.as_str()).unwrap());
+        let closure = Closure::wrap(Box::new(move || {
+            let received_data: String = receiver.recv().unwrap();
+            Button::update_element(serde_json::from_str(received_data.as_str()).unwrap());
+        }) as Box<dyn FnMut()>);
+        Closure::forget(closure);
 
         let mut btreemap = BTreeMap::new();
         btreemap.insert(String::from(&*self.uid), sender);
