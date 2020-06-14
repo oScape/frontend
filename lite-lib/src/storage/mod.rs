@@ -1,4 +1,3 @@
-use serde::{Serialize, Deserialize};
 use crate::utils::logger::logger;
 use crate::{button::Button, text::Text};
 use std::collections::BTreeMap;
@@ -11,7 +10,7 @@ pub struct Storage {
 impl Storage {
     pub fn new(first_state: BTreeMap<String, String>) -> Storage {
         Storage {
-            global_state: first_state
+            global_state: first_state,
         }
     }
 
@@ -20,16 +19,17 @@ impl Storage {
     }
 
     pub fn update_state(&mut self, state_to_merge: BTreeMap<String, String>) {
+        logger(String::from("previous state"), &self.global_state);
         for (new_uid, new_state) in state_to_merge {
             for (old_uid, old_state) in &mut self.global_state {
                 if old_uid == &new_uid {
                     *old_state = new_state;
-                    break
+                    break;
                 }
             }
         }
         Storage::dispatch(&self.global_state);
-        // logger(&self.global_state);
+        logger(String::from("next state"), &self.global_state);
     }
 
     fn dispatch(global_state: &BTreeMap<String, String>) {

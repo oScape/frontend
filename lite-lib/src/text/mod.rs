@@ -1,11 +1,9 @@
 use crate::utils::dom::document;
-use crate::{
-    utils::query_selector::{query_selector, SelectorType},
-};
+use crate::utils::query_selector::{query_selector, SelectorType};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlDivElement, HtmlElement};
-use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Text {
@@ -17,7 +15,11 @@ pub struct Text {
 impl Text {
     pub fn new(uid: String, text: String) -> Text {
         let type_element = String::from("text");
-        Text { type_element, text, uid }
+        Text {
+            type_element,
+            text,
+            uid,
+        }
     }
 
     pub fn render_element(&self) -> &Text {
@@ -48,7 +50,10 @@ impl Text {
 
     pub fn build_tree_map(&self) -> BTreeMap<String, String> {
         let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from(&*self.uid), serde_json::to_string(&self).unwrap());
+        btreemap.insert(
+            String::from(&*self.uid),
+            serde_json::to_string(&self).unwrap(),
+        );
 
         btreemap
     }

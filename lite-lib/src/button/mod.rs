@@ -1,12 +1,10 @@
 use crate::utils::dom::document;
-use crate::{
-    utils::query_selector::{query_selector, SelectorType},
-};
+use crate::utils::query_selector::{query_selector, SelectorType};
 use js_sys::Function;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlButtonElement, HtmlElement};
-use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Button {
@@ -60,7 +58,10 @@ impl Button {
 
     pub fn build_tree_map(&self) -> BTreeMap<String, String> {
         let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from(&*self.uid), serde_json::to_string(&self).unwrap());
+        btreemap.insert(
+            String::from(&*self.uid),
+            serde_json::to_string(&self).unwrap(),
+        );
 
         btreemap
     }

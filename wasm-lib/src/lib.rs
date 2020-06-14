@@ -1,9 +1,5 @@
 use js_sys::Function;
-use lite_lib::{
-    button::Button,
-    storage::{Storage},
-    text::Text,
-};
+use lite_lib::{button::Button, storage::Storage, text::Text};
 use std::{
     collections::BTreeMap,
     sync::{Arc, Mutex},
@@ -30,13 +26,9 @@ pub fn run() -> Result<(), JsValue> {
         .unwrap()
         .add_btreemap(&mut text_element_3.build_tree_map());
 
-    let button_element = Button::new(
-        String::from("button_uid"),
-        String::from("button"),
-    );
+    let button_element = Button::new(String::from("button_uid"), String::from("button"));
     button_element.render_element();
-    button_element.add_on_click(
-        on_click_action(storage.clone()));
+    button_element.add_on_click(on_click_action(storage.clone()));
     storage
         .lock()
         .unwrap()
@@ -45,21 +37,19 @@ pub fn run() -> Result<(), JsValue> {
     Ok(())
 }
 
-fn on_click_action(
-    storage: Arc<Mutex<Storage>>
-) -> Function {
-    let new_button = Button::new(
-        String::from("button_uid"),
-        String::from("new_button"),
-    );
-    let new_text = Text::new(
-        String::from("text_uid_1"),
-        String::from("new_text"),
-    );
+fn on_click_action(storage: Arc<Mutex<Storage>>) -> Function {
+    let new_button = Button::new(String::from("button_uid"), String::from("new_button"));
+    let new_text = Text::new(String::from("text_uid_1"), String::from("new_text"));
     let cb = Closure::wrap(Box::new(move || {
         let mut btreemap = BTreeMap::new();
-        btreemap.insert(String::from("button_uid"), serde_json::to_string(&new_button).unwrap());
-        btreemap.insert(String::from("text_uid_1"), serde_json::to_string(&new_text).unwrap());
+        btreemap.insert(
+            String::from("button_uid"),
+            serde_json::to_string(&new_button).unwrap(),
+        );
+        btreemap.insert(
+            String::from("text_uid_1"),
+            serde_json::to_string(&new_text).unwrap(),
+        );
 
         storage.lock().unwrap().update_state(btreemap);
     }) as Box<dyn FnMut()>);
