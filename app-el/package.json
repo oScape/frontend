@@ -10,7 +10,7 @@
     "start": "webpack --config webpack.config.js && electron ."
   },
   "dependencies": {
-    "electron": "^8.0.3"
+    "electron": "^8.5.1"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.2.0",
